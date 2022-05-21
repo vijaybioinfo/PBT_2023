@@ -37,4 +37,4 @@ Vijayanand Lab Division of Vaccine Discovery La Jolla Institute for Immunology L
 
 Contact
 -----------
-Please email Kevin Meza-Landeros (kmlanderos@lji.org) and Vijayanand Pandurangan (vijay@lji.org).
+Please email Kevin Meza-Landeros (kmlanderos@lji.org), Ciro Ramírez-Suástegui (ksuasteguic@gmail.com, ciro@lji.org) and Vijayanand Pandurangan (vijay@lji.org).
