@@ -1,8 +1,7 @@
 # PEDIATRIC_BRAIN_TUMORS
 ------------
 
-This repository contains the scripts used to analyze our pediatric brain tumors samples focused on T cells (CD4+ and CD8+).
-The data contains single-cell RNA-seq samples.
+This repository contains the scripts used to analyze our single-cell RNA-seq samples coming from pediatric brain tumors; focused on CD4+ and CD8+ T cells.
 
 REQUIREMENTS
 ------------
