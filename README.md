@@ -30,11 +30,12 @@ MAINTAINERS
 -----------
 
 Current maintainers:
-* Kevin Meza-Landeros (kmlanderos@lji.org) and Ciro Ramírez-Suástegui (ksuasteguic@gmail.com, ciro@lji.org)
+* Kevin Meza-Landeros (kmlanderos@lji.org) 
+* Ciro Ramírez-Suástegui (ksuasteguic@gmail.com, ciro@lji.org)
 
 Vijayanand Lab.  
 Division of Vaccine Discovery La Jolla Institute for Immunology La Jolla, CA 92037, USA
 
 Contact
 -----------
-Please email Kevin Meza-Landeros (kmlanderos@lji.org), Ciro Ramírez-Suástegui (ksuasteguic@gmail.com, ciro@lji.org) and Vijayanand Pandurangan (vijay@lji.org).
+Please email Kevin Meza-Landeros (kmlanderos@lji.org), Ciro Ramírez-Suástegui (ksuasteguic@gmail.com, ciro@lji.org) and/or Vijayanand Pandurangan (vijay@lji.org).
