@@ -22,7 +22,7 @@ Raw data files and the metadata can be downloaded though the following GEO acces
 Data pre-processing
 ------------
 
-* You can follow the instructions for [our 10x demultiplexing and mapping pipeline](https://github.com/vijaybioinfo/cellranger_wrappeR) using Cell Ranger.
+* To do the 10x demultiplexing and mapping use [our in-house pipeline](https://github.com/vijaybioinfo/cellranger_wrappeR) using Cell Ranger.
 * To do the donor the multiplexing use [our in-house pipeline](https://github.com/vijaybioinfo/ab_capture).
 * For the single-cell quality control just pull [our in-house pipeline](https://github.com/vijaybioinfo/quality_control).
 * To do the doublet detection use [our in-house pipeline](https://github.com/vijaybioinfo/).
