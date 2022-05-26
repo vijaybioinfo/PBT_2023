@@ -8,7 +8,7 @@ This repository contains the scripts used to analyze our single-cell RNA-seq sam
 
 If you want to clune this repository run:
 ```bash
-git clone https://github.com/swolock/scrublet.git](https://github.com/vijaybioinfo/PEDIATRIC_BRAIN_TUMORS.git
+git clone https://github.com/vijaybioinfo/PEDIATRIC_BRAIN_TUMORS.git
 ```
 
 REQUIREMENTS
