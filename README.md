@@ -8,8 +8,13 @@ REQUIREMENTS
 
 This project requires the following modules/programs:
 
+* [R](https://cran.r-project.org/) (v3.6.1)
 * [Cell Ranger](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger) (v3.1.0)
 * [Seurat](https://satijalab.org/seurat) (v3.1.5)
+
+DATA
+------------
+Raw data files and the metadata can be downloaded though the following GEO accession number: [GSE]()
 
 Description
 ------------
