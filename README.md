@@ -7,7 +7,7 @@ Description
 This repository contains the scripts used to analyze our single-cell RNA-seq samples coming from pediatric brain tumors; focusing on CD4+ and CD8+ T cells.
 
 
-REQUIREMENTS
+Requirements
 ------------
 
 This project was done using the following modules/programs:
@@ -49,7 +49,7 @@ git clone https://github.com/vijaybioinfo/PEDIATRIC_BRAIN_TUMORS.git
 Please cite the following manuscript if you are using this repository:
 
 
-MAINTAINERS
+Maintainers
 -----------
 
 Current maintainers:
