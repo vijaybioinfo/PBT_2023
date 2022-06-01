@@ -10,7 +10,7 @@ This repository contains the scripts used to analyze our single-cell RNA-seq sam
 REQUIREMENTS
 ------------
 
-This project requires the following modules/programs:
+This project was done using the following modules/programs:
 
 * [R](https://cran.r-project.org/) (v3.6.1)
 * [Cell Ranger](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger) (v3.1.0)
