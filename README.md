@@ -39,7 +39,7 @@ Downstream Analysis
 * Figures - Files inside `/scripts/figures`
 
 
-Citation
+Usage & Citation
 --------------
 
 If you want to clone this repository run:
