@@ -29,7 +29,7 @@ Data pre-processing
 * To do the single-cell quality control just pull [our in-house pipeline](https://github.com/vijaybioinfo/quality_control).
 * To do the doublet detection use [our in-house pipeline](https://github.com/vijaybioinfo/doublet_detection) using Scrublet. 
 * To generate the clustering of single-cell data just pull [our pipeline](https://github.com/vijaybioinfo/clustering) using Seurat.
-* To to the aggregation of VDJ libraries just pull [our pipeline](https://github.com/vijaybioinfo/VDJ_aggr).
+* To do the aggregation of VDJ libraries just pull [our pipeline](https://github.com/vijaybioinfo/VDJ_aggr).
 
 For more specific information about the data generation and processing, please check the "methods" section within the manuscript.
 
