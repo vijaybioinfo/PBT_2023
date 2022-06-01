@@ -27,7 +27,7 @@ Data pre-processing
 * To do the 10x demultiplexing and mapping just pull [our in-house pipeline](https://github.com/vijaybioinfo/cellranger_wrappeR) using Cell Ranger.
 * To do the donor the multiplexing just pull [our in-house pipeline](https://github.com/vijaybioinfo/ab_capture).
 * To do the single-cell quality control just pull [our in-house pipeline](https://github.com/vijaybioinfo/quality_control).
-* To do the doublet detection use [our in-house pipeline](https://github.com/vijaybioinfo/) using Scrublet.
+* To do the doublet detection use [our in-house pipeline](https://github.com/vijaybioinfo/doublet_detection) using Scrublet. 
 * To generate the clustering of single-cell data just pull [our pipeline](https://github.com/vijaybioinfo/clustering) using Seurat.
 * To to the aggregation of VDJ libraries just pull [our pipeline](https://github.com/vijaybioinfo/VDJ_aggr).
 
