@@ -31,7 +31,7 @@ Data pre-processing
 * To generate the clustering of single-cell data just pull [our pipeline](https://github.com/vijaybioinfo/clustering) using Seurat.
 * To to the aggregation of VDJ libraries just pull [our pipeline](https://github.com/vijaybioinfo/VDJ_aggr).
 
-For more specific information about the data generation and processing, please check the methods.
+For more specific information about the data generation and processing, please check the "methods" section within the manuscript.
 
 Downstream Analysis
 ------------
