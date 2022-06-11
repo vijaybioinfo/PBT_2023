@@ -39,7 +39,7 @@ For more specific information about the data generation and processing, please c
 Downstream Analysis
 ------------
 * DGEA - You can follow [our in-house pipeline](https://github.com/vijaybioinfo/dgea)
-* Figures - Files inside `/scripts/figures`
+* Figures - Files inside `/figures`
 
 
 Usage & Citation
