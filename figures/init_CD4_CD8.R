@@ -12,120 +12,6 @@
 
 ### ==== CD4/CD8 clustering ==== ####
 
-# source("/home/kmlanderos/pbtumor-all/scripts/object_lock_CD4_CD8.R")
-
-## Generate all the Seurat objects with all the combinations for CD4 and for CD8
-# Saved in /mnt/beegfs/kmlanderos/; e.g. /mnt/beegfs/kmlanderos/CD4_object_lock_mean0.01_pct15_pc15.rds
-redu = list(umap = c("UMAP_1", "UMAP_2"), tsne = c("tSNE_1", "tSNE_2"))
-setwd('/home/kmlanderos/ad_hoc/pbtumor-all/results/figures/')
-
-packages_funcs = c(
-  "/home/ciro/scripts/handy_functions/devel/file_reading.R", # readfile
-  "/home/ciro/scripts/handy_functions/devel/filters.R",
-  "/home/ciro/scripts/handy_functions/devel/utilities.R",
-  "/home/ciro/scripts/handy_functions/devel/plots.R",
-  "/home/ciro/scripts/figease/source.R", # fig_global_objects
-  "ggplot2", "cowplot", "patchwork", "Seurat", "stringr"
-)
-loaded <- lapply(X = packages_funcs, FUN = function(x){
-  cat("*", x, "\n")
-  if(!file.exists(x)){
-    suppressMessages(require(package = x, quietly = TRUE, character.only = TRUE))
-  }else{ source(x) }
-}); theme_set(theme_cowplot())
-
-# Read files
-objects <- list()
-for (i in list.files("/mnt/beegfs/kmlanderos/", pattern = "CD\\d_object_lock") ) { # , full.names = T
-  filename <- gsub(".rds","",gsub("_object_lock_mean0.01","",i))
-  cat("\n","reading file:", filename,"\n")
-  objects[[filename]] <- readRDS(paste0("/mnt/beegfs/kmlanderos/", i))
-  objects[[filename]]@meta.data$UMAP_1 <- NULL
-  objects[[filename]]@meta.data$UMAP_2 <- NULL
-  objects[[filename]]@meta.data$cluster <- NULL
-  objects[[filename]]@meta.data$cluster <- objects[[filename]]@meta.data$RNA_snn_res.0.8
-  objects[[filename]]@meta.data <- joindf(objects[[filename]]@meta.data,
-    as.data.frame(objects[[filename]]@reductions$umap@cell.embeddings))
-}
-
-# This part was done before setting a locked object
-{ cat(redb("### Markers: dim. red. & Dot/curtain (Scatter) - CD4/CD8 clustering ### %%%%%%%%%%%%%%%%%%%%%%\n"))
-  dir.create("dim_reduction_markers");
-
-  fconfigs <- list()
-  for (i in names(objects)) {
-    data <- list()
-    if (grepl("CD4",i)) {
-      data <- list(result_id = paste0("dim_reduction_features/sc_cd3p_CD4/",i,"/"),
-        edata = paste0("objects[['",i,"']]@assays$RNA@data"), metadata = paste0("objects[['",i,"']]@meta.data"),
-        axis_x = redu[[1]][1], axis_y = redu[[1]][2],
-        features = c("CD3D", "CD4", " CD40LG", "GZMA", "GZMB", "GZMK", "CCL4", "CCL5", "CXCL13", "IL21", "CXCR3", "TBX21",
-        "IFNG", "PRF1", "TNF", "HOPX", "TNFAIP3", "NFKB1", "MX1", "IRF7", "RORA", "RORC", "CCR6", "KLRB1", "FOXP3", "IL2RA",
-        "ENTPD1", "TIGIT", "PDCD1", "HLA-DRB1", "ITGAE", "TOX", "LAG3", "ICOS", "BATF", "PRDM1", "XCL1", "XCL2")
-      )
-    }else if(grepl("CD8",i)){
-      data <- list(result_id = paste0("dim_reduction_features/sc_cd3p_CD8/",i,"/"),
-        edata = paste0("objects[['",i,"']]@assays$RNA@data"), metadata = paste0("objects[['",i,"']]@meta.data"),
-        axis_x = redu[[1]][1], axis_y = redu[[1]][2],
-        features = c("CD3D", "CD8A", "CD8B", "GZMK", "GZMA", "IRF7", "ZNF683", "ITGAE", "KLRC2", "KLRC3", "FGFBP2", "FCGR3A",
-        "KLRB1", "SLC4A10", "IL18RAP", "RORC", "GZMB", "PRF1", "PDCD1", "TNF", "IFNG", "HLA-DRB1", "LAG3", "TOX")
-      )
-    }
-    fconfigs <- append(fconfigs, list(data))
-  }
-
-  pp_markers = fig_plot_base( ## -----------------------------------------------
-    fconfigs, return_plot = FALSE, verbose = TRUE,
-    theme_extra = function(x){
-      x + geom_point(size = 0.8) + labs(x = "Dim 1", y = "Dim 2") +
-      scale_color_gradientn(colours = c("lightgrey", "blue"), breaks = scales::pretty_breaks())
-    }
-  )
-
-}
-
-# This part was done before setting a locked object
-{ cat(redb("### Signature Analyses - CD4/CD8 clustering ### %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"))
-  # cp ~/Documents/liai/cancer/pbtumor/signatures_cd3p*csv /Volumes/ciro/pbtumor/info/
-  # Rscript /home/ciro/scripts/functions/csvCorrect.R /home/ciro/pbtumor/info/signatures_cd3p.csv
-
-  source("/home/ciro/scripts/handy_functions/R/stats_summary_table.R") # stats_summary_table
-  source("/home/ciro/scripts/handy_functions/R/gsea_tests.R") # gsea_matrix, gsea_plot_summary
-  source("/home/ciro/scripts/handy_functions/devel/file_reading.R") # readfile
-  source("/home/ciro/scripts/handy_functions/devel/utilities.R")  # vlist2df
-  # source("/home/ciro/scripts/handy_functions/devel/code.R") #vlist2df
-  source("/home/ciro/scripts/figease/figease.R")
-  source("/home/ciro/scripts/handy_functions/devel/filters.R")
-
-  #setwd(setwd("/mnt/BioAdHoc/Groups/vd-vijay/kmlanderos/pbtumor-all/results/figures")
-  #dir.create("gsea")
-
-  ## ---- GSEA ---- ###
-
-  dir.create("gsea/sc_cd3p_CD8subclustering/")
-  dir.create("gsea/sc_cd3p_CD4subclustering/")
-  ## Table with the genes for the signatures
-  fname <- "gsea/signatures_cd3p_human.csv"
-  slists <- readfile(fname, stringsAsFactors = FALSE)
-
-  # i = "CD4_pct15_pc15"
-  for (i in names(objects)){
-    cat("\n","Processing sample:", i,"\n")
-    fconfigs = list(
-      list( result_id = ifelse(grepl("CD4",i),paste0("gsea/sc_cd3p_CD4subclustering/", i, "/"),paste0("gsea/sc_cd3p_CD8subclustering/", i, "/")),
-        edata = paste0("expm1(objects[['",i,"']]@assays$RNA@data)"),
-        metadata = paste0("objects[['",i,"']]@meta.data"), # levels(objects[['CD4_pct15_pc15']]@meta.data$cluster)
-        lists = lapply(X = slists[,c("TH17_Seumois2020", "CD4_cytotoxicity_Patil2018", "TFH_Locci2013", "th1_signature1_arlehamn", "CD4CTLvsTCM_Patil2018", "HALLMARK_TNFA_SIGNALING_VIA_NFKB", "tcell_activation_GO.0042110", "tcr_signaling_RHSA202403")], FUN = function(x) x[-c(1:2)] ),
-        comparisons = c("cluster")
-        #comparisons = c("cluster", unique(objects[[i]]@meta.data$cluster), "REST")
-        #comparisons = c("cluster", "0", "3", "4", "5.8", "7", "9.8", "10.8", "11.8", "13", "14", "15", "16", "REST")
-      )
-    )
-    pp_gsea = fig_gsea(fconfigs, features = rownames(objects[[i]]), return_plot = TRUE)
-  }
-
-}
-
 ### ================== Figures ================== ###
 
 # Done after locking the clustering objectss (CD4 and CD8)
@@ -157,24 +43,6 @@ system("ls -loh")
     }else{ source(x) }
   }); theme_set(theme_cowplot())
 
-  # Merge the current metadata with the TCRmetadata (obtained through Vicente's pipeline)
-  # NOTE: Not necsesary bc we obtained this info from the previous object (CD4+CD8). Modify in case we want to use it/
-  # sc_cd3p_tcr = data.frame(data.table::rbindlist(lapply(
-  #   X = c("/home/kmlanderos/large/pbtumor-all/results/tcr/CD45pCD3p_clean2_cd4/metadata.rds"),
-  #   FUN = function(x){
-  #     y <- readRDS(x); y$cellname = rownames(y); y
-  # })), stringsAsFactors = FALSE)
-  # rownames(sc_cd3p_tcr) <- sc_cd3p_tcr$cellname; sc_cd3p_tcr$cellname <- NULL
-  # sc_cd3p_tcr <- joindf(sc_cd3p_tcr, sc_cd3p@meta.data)
-  #
-  # sc_cd3p_tcr = data.frame(data.table::rbindlist(lapply(
-  #   X = c("/home/kmlanderos/large/pbtumor-all/results/tcr/CD45pCD3p_clean2_cd8/metadata.rds"),
-  #   FUN = function(x){
-  #     y <- readRDS(x); y$cellname = rownames(y); y
-  # })), stringsAsFactors = FALSE)
-  # rownames(sc_cd3p_tcr) <- sc_cd3p_tcr$cellname; sc_cd3p_tcr$cellname <- NULL
-  # sc_cd3p_tcr <- joindf(sc_cd3p_tcr, sc_cd3p@meta.data)
-
   # Define LowGrade and HighGrade patients
   sc_cd3p_cd8@meta.data$grade <- sc_cd3p_cd8@meta.data$orig.donor
   sc_cd3p_cd8@meta.data$grade[sc_cd3p_cd8@meta.data$grade %in% c("BT1", "BT3", "BT4", "BT7", "BT8", "BT9", "BT19", "BT27", "BT5", "BT24", "BT25")] <- "LG"
@@ -185,17 +53,31 @@ system("ls -loh")
   sc_cd3p_cd4@meta.data$grade[sc_cd3p_cd4@meta.data$grade %in% c("BT10", "BT15", "BT22", "BT11", "BT12", "BT18", "BT21", "BT26", "BT2", "BT13", "BT17_brain", "BT20", "BT23")] <- "HG"
 
   # Define the Low- and Highly expanded cells for LowGrade and HighGrade patients
+  # CD8
   sc_cd3p_cd8@meta.data$expDegree <- sc_cd3p_cd8@meta.data$clon.size.tag
-  sc_cd3p_cd8@meta.data$expDegree[sc_cd3p_cd8@meta.data$expDegree > 4 & sc_cd3p_cd8@meta.data$grade == "LG"] <- "HighExp_LG"
-  sc_cd3p_cd8@meta.data$expDegree[sc_cd3p_cd8@meta.data$expDegree > 4 & sc_cd3p_cd8@meta.data$grade == "HG"] <- "HighExp_HG"
-  sc_cd3p_cd8@meta.data$expDegree[sc_cd3p_cd8@meta.data$expDegree <= 4 & sc_cd3p_cd8@meta.data$grade == "LG"] <- "LowExp_LG"
-  sc_cd3p_cd8@meta.data$expDegree[sc_cd3p_cd8@meta.data$expDegree <= 4 & sc_cd3p_cd8@meta.data$grade == "HG"] <- "LowExp_HG"
-
+  sc_cd3p_cd8@meta.data$expDegree[sc_cd3p_cd8@meta.data$expDegree > 1] <- "Expanded"
+  sc_cd3p_cd8@meta.data$expDegree[sc_cd3p_cd8@meta.data$expDegree > 1] <- "Non_expanded"
+  sc_cd3p_cd8@meta.data$expDegree[sc_cd3p_cd8@meta.data$expDegree == 1] <- "Expanded"
+  sc_cd3p_cd8@meta.data$expDegree[sc_cd3p_cd8@meta.data$expDegree == 1] <- "Non_expanded"
+  # CD4
   sc_cd3p_cd4@meta.data$expDegree <- sc_cd3p_cd4@meta.data$clon.size.tag
-  sc_cd3p_cd4@meta.data$expDegree[sc_cd3p_cd4@meta.data$expDegree > 4 & sc_cd3p_cd4@meta.data$grade == "LG"] <- "HighExp_LG"
-  sc_cd3p_cd4@meta.data$expDegree[sc_cd3p_cd4@meta.data$expDegree > 4 & sc_cd3p_cd4@meta.data$grade == "HG"] <- "HighExp_HG"
-  sc_cd3p_cd4@meta.data$expDegree[sc_cd3p_cd4@meta.data$expDegree <= 4 & sc_cd3p_cd4@meta.data$grade == "LG"] <- "LowExp_LG"
-  sc_cd3p_cd4@meta.data$expDegree[sc_cd3p_cd4@meta.data$expDegree <= 4 & sc_cd3p_cd4@meta.data$grade == "HG"] <- "LowExp_HG"
+  sc_cd3p_cd4@meta.data$expDegree[sc_cd3p_cd4@meta.data$expDegree > 1] <- "Expanded"
+  sc_cd3p_cd4@meta.data$expDegree[sc_cd3p_cd4@meta.data$expDegree > 1] <- "Non_expanded"
+  sc_cd3p_cd4@meta.data$expDegree[sc_cd3p_cd4@meta.data$expDegree == 1] <- "Expanded"
+  sc_cd3p_cd4@meta.data$expDegree[sc_cd3p_cd4@meta.data$expDegree == 1] <- "Non_expanded"
+  # CD8
+  sc_cd3p_cd8@meta.data$ExpDegree <- sc_cd3p_cd8@meta.data$clon.size.tag
+  sc_cd3p_cd8@meta.data$ExpDegree[sc_cd3p_cd8@meta.data$ExpDegree > 1 & sc_cd3p_cd8@meta.data$grade == "LG"] <- "Exp_LG"
+  sc_cd3p_cd8@meta.data$ExpDegree[sc_cd3p_cd8@meta.data$ExpDegree > 1 & sc_cd3p_cd8@meta.data$grade == "HG"] <- "Exp_HG"
+  sc_cd3p_cd8@meta.data$ExpDegree[sc_cd3p_cd8@meta.data$ExpDegree == 1 & sc_cd3p_cd8@meta.data$grade == "LG"] <- "NonExp_LG"
+  sc_cd3p_cd8@meta.data$ExpDegree[sc_cd3p_cd8@meta.data$ExpDegree == 1 & sc_cd3p_cd8@meta.data$grade == "HG"] <- "NonExp_HG"
+  # CD4
+  sc_cd3p_cd4@meta.data$ExpDegree <- sc_cd3p_cd4@meta.data$clon.size.tag
+  sc_cd3p_cd4@meta.data$ExpDegree[sc_cd3p_cd4@meta.data$ExpDegree > 1 & sc_cd3p_cd4@meta.data$grade == "LG"] <- "Exp_LG"
+  sc_cd3p_cd4@meta.data$ExpDegree[sc_cd3p_cd4@meta.data$ExpDegree > 1 & sc_cd3p_cd4@meta.data$grade == "HG"] <- "Exp_HG"
+  sc_cd3p_cd4@meta.data$ExpDegree[sc_cd3p_cd4@meta.data$ExpDegree == 1 & sc_cd3p_cd4@meta.data$grade == "LG"] <- "NonExp_LG"
+  sc_cd3p_cd4@meta.data$ExpDegree[sc_cd3p_cd4@meta.data$ExpDegree == 1 & sc_cd3p_cd4@meta.data$grade == "HG"] <- "NonExp_HG"
+
 
   # Errase previous UMAP info (from past clusterng)
   sc_cd3p_cd8@meta.data$UMAP_1 <- NULL; sc_cd3p_cd8@meta.data$UMAP_2 <- NULL
@@ -206,7 +88,7 @@ system("ls -loh")
   sc_cd3p_cd4@meta.data <- joindf(sc_cd3p_cd4@meta.data,
     as.data.frame(sc_cd3p_cd4@reductions$umap@cell.embeddings))
 
-  # Group celltypes
+  # Group cell types
   sc_cd3p_cd8@meta.data$cell_classification <- as.character(sc_cd3p_cd8@meta.data$RNA_snn_res.0.2)
   sc_cd3p_cd8@meta.data$cell_classification[sc_cd3p_cd8@meta.data$cell_classification %in% c("0","1","7")] <- "GZMK"
   sc_cd3p_cd8@meta.data$cell_classification[sc_cd3p_cd8@meta.data$cell_classification %in% c("6","8")] <- "TRM"
@@ -215,15 +97,9 @@ system("ls -loh")
   sc_cd3p_cd8@meta.data$cell_classification[sc_cd3p_cd8@meta.data$cell_classification %in% c("4")] <- "TCM"
   sc_cd3p_cd8@meta.data$cell_classification[sc_cd3p_cd8@meta.data$cell_classification %in% c("5")] <- "MAIT"
   sc_cd3p_cd8@meta.data$cell_classification[sc_cd3p_cd8@meta.data$cell_classification %in% c("9")] <- "Cell_Cycle"
-  # sc_cd3p_cd8@meta.data$cell_classification[sc_cd3p_cd8@meta.data$cell_classification %in% c("0")] <- "GZMK1"
-  # sc_cd3p_cd8@meta.data$cell_classification[sc_cd3p_cd8@meta.data$cell_classification %in% c("1")] <- "GZMK2"
-  # sc_cd3p_cd8@meta.data$cell_classification[sc_cd3p_cd8@meta.data$cell_classification %in% c("7")] <- "GZMK3_BT25"
-  # sc_cd3p_cd8@meta.data$cell_classification[sc_cd3p_cd8@meta.data$cell_classification %in% c("6")] <- "TRM1"
-  # sc_cd3p_cd8@meta.data$cell_classification[sc_cd3p_cd8@meta.data$cell_classification %in% c("8")] <- "TRM2"
 
   sc_cd3p_cd4@meta.data$cell_classification <- as.character(sc_cd3p_cd4@meta.data$RNA_snn_res.0.4)
   sc_cd3p_cd4@meta.data$cell_classification[sc_cd3p_cd4@meta.data$cell_classification %in% c("3", "6", "7", "8")] <- "TCM" #
-  # sc_cd3p_cd4@meta.data$cell_classification[sc_cd3p_cd4@meta.data$cell_classification %in% c("0", "2", "4", "9")] <- "CTL" #
   sc_cd3p_cd4@meta.data$cell_classification[sc_cd3p_cd4@meta.data$cell_classification %in% c("1")] <- "TNF" #
   sc_cd3p_cd4@meta.data$cell_classification[sc_cd3p_cd4@meta.data$cell_classification %in% c("5")] <- "TREG" #
   sc_cd3p_cd4@meta.data$cell_classification[sc_cd3p_cd4@meta.data$cell_classification %in% c("10")] <- "TFH"
@@ -232,14 +108,14 @@ system("ls -loh")
   sc_cd3p_cd4@meta.data$cell_classification[sc_cd3p_cd4@meta.data$cell_classification %in% c("2")] <- "CTL_TH1" #
   sc_cd3p_cd4@meta.data$cell_classification[sc_cd3p_cd4@meta.data$cell_classification %in% c("4")] <- "CTL_TH17"
   sc_cd3p_cd4@meta.data$cell_classification[sc_cd3p_cd4@meta.data$cell_classification %in% c("9")] <- "CTL_IFN"
-  # sc_cd3p_cd4@meta.data$cell_classification[sc_cd3p_cd4@meta.data$cell_classification %in% c("3")] <- "TCM1" #
-  # sc_cd3p_cd4@meta.data$cell_classification[sc_cd3p_cd4@meta.data$cell_classification %in% c("6")] <- "TCM2" #
-  # sc_cd3p_cd4@meta.data$cell_classification[sc_cd3p_cd4@meta.data$cell_classification %in% c("7")] <- "TCM3" #
-  # sc_cd3p_cd4@meta.data$cell_classification[sc_cd3p_cd4@meta.data$cell_classification %in% c("8")] <- "TCM4" #
 
-  # # Create cluster.celltype columns
-  # sc_cd3p_cd8@meta.data$cluster.celltype <- NULL; sc_cd3p_cd8@meta.data$cluster.celltype <- factor(paste(sc_cd3p_cd8@meta.data$cluster,": ",sc_cd3p_cd8@meta.data$cell_classification))
-  # sc_cd3p_cd4@meta.data$cluster.celltype <- NULL; sc_cd3p_cd4@meta.data$cluster.celltype <- factor(paste(sc_cd3p_cd4@meta.data$cluster,": ",sc_cd3p_cd4@meta.data$cell_classification))
+  # Secondary cell type aggroupation
+  mdata_sc_cd3p_cd8$cell_classification_2 <- as.character(mdata_sc_cd3p_cd8$RNA_snn_res.0.2)
+  mdata_sc_cd3p_cd8$cell_classification_2[mdata_sc_cd3p_cd8$cell_classification_2 %in% c("3","4")] <- "3_4"
+
+  mdata_sc_cd3p_cd4$cell_classification_2 <- as.character(mdata_sc_cd3p_cd4$RNA_snn_res.0.4)
+  mdata_sc_cd3p_cd4$cell_classification_2[mdata_sc_cd3p_cd4$cell_classification_2 %in% c("3", "6", "7", "8")] <- "TCM"
+  mdata_sc_cd
 
   # Update the Diognosis from Neuroblastoma to High_grade_glioma
   sc_cd3p_cd8@meta.data$orig.Diagnosis[sc_cd3p_cd8@meta.data$orig.Diagnosis == "Neuroblastoma"] <- "High grade glioma"
@@ -316,6 +192,12 @@ system("ls -loh")
   # saveRDS(sc_cd3p_cd8, file = "data/sc_cd3p_cd8_seurat_object.rds")
   # saveRDS(sc_cd3p_cd4, file = "data/sc_cd3p_cd4_seurat_object.rds")
 
+  # Save merged object of CD4 and CD8
+  # sc_cd3p <- merge(sc_cd3p_cd4, y = sc_cd3p_cd8, merge.data = TRUE)
+  # saveRDS(sc_cd3p@meta.data, file = "data/sc_cd3p_mdata.rds")
+  # saveRDS(sc_cd3p, file = "data/sc_cd3p_seurat_object.rds")
+
+
   # Save an object with CD4 and CD8 cells for IA.
   # sc_cd3p_cd4$orig.celltype <- "CD4"
   # sc_cd3p_cd8$orig.celltype <- "CD8"
@@ -346,43 +228,15 @@ system("ls -loh")
   source("/home/ciro/scripts/handy_functions/devel/filters.R")
   library(dplyr)
 
-  #setwd(setwd("/mnt/BioAdHoc/Groups/vd-vijay/kmlanderos/pbtumor-all/results/figures")
   dir.create("gsea")
 
   ## ---- GSEA ---- ###
 
   fname <- "../gsea/signatures_cd3p_human_v2.csv"
   slists <- readfile(fname, stringsAsFactors = FALSE)
-  # Added CD4-CTL signature from Veena's paper (Patil3_COVID") to this file
 
   mdata_sc_cd3p_cd8 <- sc_cd3p_cd8@meta.data
   mdata_sc_cd3p_cd4 <- sc_cd3p_cd4@meta.data
-  # Modify metadata
-  # CD8
-  mdata_sc_cd3p_cd8$cell_classification <- as.character(mdata_sc_cd3p_cd8$RNA_snn_res.0.2)
-  mdata_sc_cd3p_cd8$cell_classification[mdata_sc_cd3p_cd8$cell_classification %in% c("0","1","7")] <- "GZMK"
-  mdata_sc_cd3p_cd8$cell_classification[mdata_sc_cd3p_cd8$cell_classification %in% c("6","8")] <- "TRM"
-  # Group C3 and C4
-  mdata_sc_cd3p_cd8$cell_classification_2 <- as.character(mdata_sc_cd3p_cd8$RNA_snn_res.0.2)
-  mdata_sc_cd3p_cd8$cell_classification_2[mdata_sc_cd3p_cd8$cell_classification_2 %in% c("3","4")] <- "3_4"
-
-  # CD4 : Setting 1
-  mdata_sc_cd3p_cd4$cell_classification <- as.character(mdata_sc_cd3p_cd4$RNA_snn_res.0.4)
-  mdata_sc_cd3p_cd4$cell_classification[mdata_sc_cd3p_cd4$cell_classification %in% c("3", "6", "7", "8")] <- "TCM"
-  # CD4 : Setting 2
-  mdata_sc_cd3p_cd4$cell_classification_2 <- as.character(mdata_sc_cd3p_cd4$RNA_snn_res.0.4)
-  mdata_sc_cd3p_cd4$cell_classification_2[mdata_sc_cd3p_cd4$cell_classification_2 %in% c("3", "6", "7", "8")] <- "TCM"
-  mdata_sc_cd3p_cd4$cell_classification_2[mdata_sc_cd3p_cd4$cell_classification_2 %in% c("0", "2", "4", "9")] <- "CTL"
-
-  # Expansion Degree
-  # CD4
-  mdata_sc_cd3p_cd4$expDegree <- mdata_sc_cd3p_cd4$clon.size.tag
-  mdata_sc_cd3p_cd4$expDegree[mdata_sc_cd3p_cd4$expDegree > 1] <- "HighExp"
-  mdata_sc_cd3p_cd4$expDegree[mdata_sc_cd3p_cd4$expDegree == 1] <- "LowExp"
-  # CD8
-  mdata_sc_cd3p_cd8$expDegree <- mdata_sc_cd3p_cd8$clon.size.tag
-  mdata_sc_cd3p_cd8$expDegree[mdata_sc_cd3p_cd8$expDegree > 1] <- "HighExp"
-  mdata_sc_cd3p_cd8$expDegree[mdata_sc_cd3p_cd8$expDegree == 1] <- "LowExp"
 
   # Create PDCD1_tag to compare PDCD1p vs PDCD1n
   PDCD1_tag_tmp <- as.matrix(sc_cd3p_cd8@assays$RNA@data["PDCD1",]) > 0
@@ -435,6 +289,13 @@ system("ls -loh")
       lists = lapply(X = slists[,c(41,42)], FUN = function(x) x[-c(1:2)] ),
       comparisons = c("cluster")
     ),
+    # Neo TCR - CD4 all; expansion comparison
+    list(result_id = "gsea/CD4_neoantigenTCR_all_expansion/",
+      edata = "expm1(sc_cd3p_cd4@assays$RNA@data)",
+      metadata = "mdata_sc_cd3p_cd4",
+      lists = lapply(X = slists[,c(41,42)], FUN = function(x) x[-c(1:2)] ),
+      comparisons = c("expDegree")
+    ),
     # Neo TCR - CD4 LG; expansion comparison
     list(result_id = "gsea/CD4_neoantigenTCR_LG_expansion/",
       edata = "expm1(sc_cd3p_cd4@assays$RNA@data)",
@@ -451,13 +312,6 @@ system("ls -loh")
       sample_filter = c("grade", "HG"),
       comparisons = c("expDegree")
     ),
-    # Neo TCR - CD4 all; expansion comparison
-    list(result_id = "gsea/CD4_neoantigenTCR_all_expansion/",
-      edata = "expm1(sc_cd3p_cd4@assays$RNA@data)",
-      metadata = "mdata_sc_cd3p_cd4",
-      lists = lapply(X = slists[,c(41,42)], FUN = function(x) x[-c(1:2)] ),
-      comparisons = c("expDegree")
-    ),
     # Neo TCR - CD4 all; specificityGroups comparison (9)
     list(result_id = "gsea/CD4_neoantigenTCR_all_specificityGroups/",
       edata = "expm1(sc_cd3p_cd4@assays$RNA@data)",
@@ -471,6 +325,13 @@ system("ls -loh")
       metadata = "mdata_sc_cd3p_cd8",
       lists = lapply(X = slists[,c(41,42)], FUN = function(x) x[-c(1:2)] ),
       comparisons = c("cluster")
+    ),
+    # Neo TCR - CD8 all; expansion comparison
+    list(result_id = "gsea/CD8_neoantigenTCR_all_expansion/",
+      edata = "expm1(sc_cd3p_cd8@assays$RNA@data)",
+      metadata = "mdata_sc_cd3p_cd8",
+      lists = lapply(X = slists[,c(41,42)], FUN = function(x) x[-c(1:2)] ),
+      comparisons = c("expDegree")
     ),
     # Neo TCR - CD8 LG; expansion comparison
     list(result_id = "gsea/CD8_neoantigenTCR_LG_expansion/",
@@ -554,12 +415,12 @@ system("ls -loh")
   pp_gsea = fig_gsea(fconfigs[3:4], features = rownames(sc_cd3p_cd4), return_plot = TRUE, verbose = T)
   # ---> Neo TCR
   pp_gsea = fig_gsea(fconfigs[5:9], features = rownames(sc_cd3p_cd4), return_plot = TRUE, verbose = T)
-  pp_gsea = fig_gsea(fconfigs[10:14], features = rownames(sc_cd3p_cd8), return_plot = TRUE, verbose = T)
+  pp_gsea = fig_gsea(fconfigs[10:15], features = rownames(sc_cd3p_cd8), return_plot = TRUE, verbose = T)
   # ---> TSCM
-  pp_gsea = fig_gsea(fconfigs[15], features = rownames(sc_cd3p_cd4), return_plot = TRUE, verbose = T)
-  pp_gsea = fig_gsea(fconfigs[16:20], features = rownames(sc_cd3p_cd8), return_plot = TRUE, verbose = T)
+  pp_gsea = fig_gsea(fconfigs[16], features = rownames(sc_cd3p_cd4), return_plot = TRUE, verbose = T)
+  pp_gsea = fig_gsea(fconfigs[17:21], features = rownames(sc_cd3p_cd8), return_plot = TRUE, verbose = T)
 
-  pp_gsea = fig_gsea(fconfigs[c(9,14)], features = rownames(sc_cd3p_cd8), return_plot = TRUE, verbose = T)
+  pp_gsea = fig_gsea(fconfigs[c(6,11)], features = rownames(sc_cd3p_cd8), return_plot = TRUE, verbose = T)
 
 
   # --> Customized Radar Plots
@@ -611,18 +472,14 @@ system("ls -loh")
   # sc_cd3p_lists <- readfile("/home/ciro/pbtumor/large/results/figures/gsea/sc_cd3p_mod_signatures.csv", stringsAsFactors = FALSE)
   sc_cd3p_lists <- readfile("/mnt/BioAdHoc/Groups/vd-vijay/kmlanderos/pbtumor-all/results/figures/gsea/signatures_cd3p_human_v2.csv", stringsAsFactors = FALSE)
 
-  # Modify metadata
   mdata_sc_cd3p_cd4 <- sc_cd3p_cd4@meta.data
-  mdata_sc_cd3p_cd4$cell_classification <- as.character(mdata_sc_cd3p_cd4$RNA_snn_res.0.4)
-  mdata_sc_cd3p_cd4$cell_classification[mdata_sc_cd3p_cd4$cell_classification %in% c("3", "6", "7", "8")] <- "TCM"
-  mdata_sc_cd3p_cd4$cell_classification[mdata_sc_cd3p_cd4$cell_classification %in% c("0", "2", "4", "9")] <- "CTL"
 
   fconfigs = list(
     list(result_id = "modulescores/", sufix = "_test/",
       edata = "expm1(sc_cd3p_cd4@assays$RNA@data)",
       metadata = "mdata_sc_cd3p_cd4", object = "sc_cd3p_cd4",
       lists = gsea_process_list(sc_cd3p_lists[-c(1:2),c("CD4CTLvsTCM_Patil2018", "TFH_Locci2013", "Treg_Schmiedel2018", "TH17_Seumois2020", "tcell_activation_GO.0042110.1", "tcr_signaling_RHSA202403.1", "CellCycle_Best2013.1", "TypeIandII_IFNsignaling_Seumois2020.1", "th1_signature1_arlehamn", "HALLMARK_TNFA_SIGNALING_VIA_NFKB")]),
-      axis_x = list(col = "cell_classification" , order=c("TCM", "CTL", "1", "10", "11", "5")),
+      axis_x = list(col = "cell_classification_2" , order=c("TCM", "CTL", "1", "10", "11", "5")),
       # sample_filter = c("cluster", "0", "3", "9.8", "15", "14", "16", "4"),
       variables = "Identity"
     ),
@@ -630,7 +487,7 @@ system("ls -loh")
       edata = "expm1(sc_cd3p_cd8@assays$RNA@data)",
       metadata = "sc_cd3p_cd8@meta.data", object = "sc_cd3p_cd8",
       lists = gsea_process_list(sc_cd3p_lists[-c(1:2), c("CD8_GZMK_Guo2018", "TRM_192_UP_HobitScience", "Gutierrez_Innateness2019", "CYTOTOXICITY.SIGNATURE_CD161.paper_matthewson..Cell")]),
-      axis_x = list(col = "cell_classification"),
+      axis_x = list(col = "cell_classification_2"),
       # sample_filter = c("cluster", "0", "3", "9.8", "15", "14", "16", "4"),
       variables = "Identity"
     )
@@ -670,6 +527,16 @@ system("ls -loh")
   #
   pdf(paste0(dir, "cd4ctlvstcm_patil2018_0.15_umap_v2.pdf"))
   mdata_sc_cd3p_cd4 %>% ggplot(aes(x = UMAP_1, y = UMAP_2, color = CD4CTL_signature_adjusted)) + geom_point(size = 0.1) + scale_color_gradientn(colours = c("#fffffa", "#f9ec8f", "#ffe080", "orange", "#FF5E0E", "red")) + #, "#670000"
+    labs(colour = NULL, x = NULL, y = NULL) + theme(axis.text.x=element_blank(), axis.text.y=element_blank() )
+  graphics.off()
+  # Vicente's color scale 0.15
+  pdf(paste0(dir, "cd4ctlvstcm_patil2018_0.15_umap_v3.pdf"))
+  mdata_sc_cd3p_cd4 %>% ggplot(aes(x = UMAP_1, y = UMAP_2, color = CD4CTL_signature_adjusted)) + geom_point(size = 0.1) + scale_color_gradientn(colours = c('#ffffff', '#ffffe0', '#ffffad', '#ffdf32', '#ff9a00', '#ff5a00', '#ff5719','#EE0000','#b30000', '#670000')) + #, "#670000"
+    labs(colour = NULL, x = NULL, y = NULL) + theme(axis.text.x=element_blank(), axis.text.y=element_blank() )
+  graphics.off()
+  # Vicente's color scale 0.2
+  pdf(paste0(dir, "cd4ctlvstcm_patil2018_0.2_umap_v3.pdf"))
+  mdata_sc_cd3p_cd4 %>% ggplot(aes(x = UMAP_1, y = UMAP_2, color = CD4CTL_signature_adjusted)) + geom_point(size = 0.1) + scale_color_gradientn(colours = c('#ffffff', '#ffffe0', '#ffffad', '#ffdf32', '#ff9a00', '#ff5a00', '#ff5719','#EE0000','#b30000', '#670000')) + #, "#670000"
     labs(colour = NULL, x = NULL, y = NULL) + theme(axis.text.x=element_blank(), axis.text.y=element_blank() )
   graphics.off()
 
@@ -782,16 +649,6 @@ system("ls -loh")
   # NOTE: Already in "Secondary global variables"; Here we just choose another threshold to establish clonally expanded cells. (Only for CD8)
   # CLONAL EXPANSION (cs == 1 low and cs > 1 high)
   mdata_sc_cd3p_cd8 <- sc_cd3p_cd8@meta.data
-  mdata_sc_cd3p_cd8$expDegree <- mdata_sc_cd3p_cd8$clon.size.tag
-  mdata_sc_cd3p_cd8$expDegree[mdata_sc_cd3p_cd8$expDegree > 1 & mdata_sc_cd3p_cd8$grade == "LG"] <- "HighExp_LG"
-  mdata_sc_cd3p_cd8$expDegree[mdata_sc_cd3p_cd8$expDegree > 1 & mdata_sc_cd3p_cd8$grade == "HG"] <- "HighExp_HG"
-  mdata_sc_cd3p_cd8$expDegree[mdata_sc_cd3p_cd8$expDegree == 1 & mdata_sc_cd3p_cd8$grade == "LG"] <- "LowExp_LG"
-  mdata_sc_cd3p_cd8$expDegree[mdata_sc_cd3p_cd8$expDegree == 1 & mdata_sc_cd3p_cd8$grade == "HG"] <- "LowExp_HG"
-
-  mdata_sc_cd3p_cd4 <- sc_cd3p_cd4@meta.data
-  mdata_sc_cd3p_cd4$expDegree <- mdata_sc_cd3p_cd4$clon.size.tag
-  mdata_sc_cd3p_cd4$expDegree[mdata_sc_cd3p_cd4$expDegree > 1] <- "HighExp"
-  mdata_sc_cd3p_cd4$expDegree[mdata_sc_cd3p_cd4$expDegree == 1] <- "LowExp"
 
   # Create PDCD1_tag to compare PDCD1p vs PDCD1n
   PDCD1_tag_tmp <- as.matrix(sc_cd3p_cd8@assays$RNA@data["PDCD1",]) > 0
@@ -806,7 +663,7 @@ system("ls -loh")
     # CD8 thold = 5
     list(result_id = "violins/sc_cd3p_cd8_thold5_TumorGrade_ExpansionGrade/violin_",
       edata = "sc_cd3p_cd8@assays$RNA@data", metadata = "sc_cd3p_cd8@meta.data[!is.na(sc_cd3p_cd8@meta.data$clon.size.tag) & !is.na(sc_cd3p_cd8@meta.data$orig.donor),]",
-      axis_x = list(col = "expDegree", order = c("LowExp_LG", "LowExp_HG", "HighExp_LG", "HighExp_HG")),
+      axis_x = list(col = "expDegree", order = c("NonExp_LG", "NonExp_HG", "Exp_LG", "Exp_HG")),
       # sample_filter = c("celltype", "CD8"),
       features = c("CD2", "COTL1", "HLA-DRB1", "PDCD1", "TOX", "GZMK", "GZMA", "CCL3", "CCL4", "FASLG", "CTSW", "LAG3", "TNF",
       "SLAMF7", "IFNG", "PRF1", "BATF", "XCL2", "CXCR6", "CXCR3", "CCL5", "FGFBP2", "GNLY", "TBX21", "ZEB2", "ZNF683", "GZMB",
@@ -815,7 +672,7 @@ system("ls -loh")
     # CD8 thold = 2
     list(result_id = "violins/sc_cd3p_cd8_thold2_TumorGrade_ExpansionGrade/violin_",
       edata = "sc_cd3p_cd8@assays$RNA@data", metadata = "mdata_sc_cd3p_cd8[!is.na(mdata_sc_cd3p_cd8$clon.size.tag) & !is.na(mdata_sc_cd3p_cd8$orig.donor),]",
-      axis_x = list(col = "expDegree", order = c("LowExp_LG", "LowExp_HG", "HighExp_LG", "HighExp_HG")),
+      axis_x = list(col = "expDegree", order = c("NonExp_LG", "NonExp_HG", "Exp_LG", "Exp_HG")),
       features = c("CD2", "COTL1", "HLA-DRB1", "PDCD1", "TOX", "GZMK", "GZMA", "CCL3", "CCL4", "FASLG", "CTSW", "LAG3", "TNF",
       "SLAMF7", "IFNG", "PRF1", "BATF", "XCL2", "CXCR6", "CXCR3", "CCL5", "FGFBP2", "GNLY", "TBX21", "ZEB2", "ZNF683", "GZMB",
       "ARAP2", "HOPX", "NFATC2", "PRDM1", "CX3CR1", "MYH9", "NFATC2", "IL2RB", "IL2RG")
@@ -823,7 +680,7 @@ system("ls -loh")
     # CD4 thold = 5; Exclude TREGs (cluster 5)
     list(result_id = "violins/sc_cd3p_cd4_thold5_TumorGrade_ExpansionGrade/violin_",
       edata = "sc_cd3p_cd4@assays$RNA@data", metadata = "sc_cd3p_cd4@meta.data[!is.na(sc_cd3p_cd4@meta.data$clon.size.tag) & !is.na(sc_cd3p_cd4@meta.data$orig.donor),]",
-      axis_x = list(col = "expDegree", order = c("LowExp_LG", "LowExp_HG", "HighExp_LG", "HighExp_HG")),
+      axis_x = list(col = "expDegree", order = c("NonExp_LG", "NonExp_HG", "Exp_LG", "Exp_HG")),
       sample_filter = c("cluster", c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11")),
       features = c("PRF1", "IFNG", "CD40LG", "GZMK", "GZMA", "TBX21", "HLA-DRB1", "CCL5", "CCL4", "TOX", "LAG3", "PDCD1", "NKG7",
       "ITGA1", "ITGAE", "EOMES", "SPON2", "ZEB2", "RBPJ", "BATF", "XCL2", "CXCL13", "XCL1", "BTLA", "STAT1", "ICOS", "TIGIT", "IL21",
@@ -832,7 +689,7 @@ system("ls -loh")
     # CD4 thold = 2; Exclude TREGs (cluster 5)
     list(result_id = "violins/sc_cd3p_cd4_thold2_ExpansionGrade/violin_",
       edata = "sc_cd3p_cd4@assays$RNA@data", metadata = "mdata_sc_cd3p_cd4[!is.na(mdata_sc_cd3p_cd4$clon.size.tag),]",
-      axis_x = list(col = "expDegree", order = c("LowExp", "HighExp")),
+      axis_x = list(col = "expDegree", order = c("Non_expanded", "Expanded")),
       sample_filter = c("cluster", c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11")),
       features = c("PRF1", "IFNG", "CD40LG", "GZMK", "GZMA", "TBX21", "HLA-DRB1", "CCL5", "CCL4", "TOX", "LAG3", "PDCD1", "NKG7",
       "ITGA1", "ITGAE", "EOMES", "SPON2", "ZEB2", "RBPJ", "BATF", "XCL2", "CXCL13", "XCL1", "BTLA", "STAT1", "ICOS", "TIGIT", "IL21",
@@ -1238,7 +1095,7 @@ system("ls -loh")
 
 }
 
-{ cat(redb("### NK T-cells receptors ### %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"))
+{ cat(redb("### NK T-cells receptors ### %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"))
 
   library(data.table)
   # Read GLIPH2Input table that has VDJ genes' info
@@ -1298,8 +1155,6 @@ system("ls -loh")
   # Adjust the metadata
   sc_cd3p_cd4_mdata <- sc_cd3p_cd4@meta.data
   sc_cd3p_cd4_mdata <- sc_cd3p_cd4_mdata[!is.na(sc_cd3p_cd4_mdata$clon.size.tag),]
-  # sc_cd3p_cd4_mdata$ExpDegree <- ifelse(sc_cd3p_cd4_mdata$clon.size.tag > 4, "high", "low")
-  sc_cd3p_cd4_mdata$ExpDegree <- ifelse(sc_cd3p_cd4_mdata$clon.size.tag > 1, "high", "low")
 
   # Gene comparisons
   tmp <- list(
@@ -1311,11 +1166,11 @@ system("ls -loh")
   # sc_cd4_HighlyExpanded. Excluding TREGs (cluster 5).
   fconfigs = lapply(tmp, function(x){
     list(result_id = "scatter_contour/sc_cd4_HighlyExpanded/",
-      edata = "sc_cd3p_cd4@assays$RNA@data", metadata = "sc_cd3p_cd4_mdata[sc_cd3p_cd4_mdata$cluster %in% c('0', '1', '2', '3', '4', '6', '7', '8', '9', '10', '11'),]", # [sc_cd3p_cd4_mdata$ExpDegree=='high',]
+      edata = "sc_cd3p_cd4@assays$RNA@data", metadata = "sc_cd3p_cd4_mdata[sc_cd3p_cd4_mdata$cluster %in% c('0', '1', '2', '3', '4', '6', '7', '8', '9', '10', '11'),]", # [sc_cd3p_cd4_mdata$expDegree=='Expanded',]
       features = x,
       # sample_filter = c("cluster", c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11")),
-      sample_filter = list(c("ExpDegree", "high"))
-      # sample_filter = setNames(object = list("high", c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11")), c("ExpDegree", "cluster"))
+      sample_filter = list(c("expDegree", "Expanded"))
+      # sample_filter = setNames(object = list("Expanded", c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11")), c("expDegree", "cluster"))
     )
   })
   pp_contour = fig_plot_contour(fconfigs,
@@ -1324,11 +1179,11 @@ system("ls -loh")
   # sc_cd4_LowlyExpanded. Excluding TREGs (cluster 5).
   fconfigs = lapply(tmp, function(x){
     list(result_id = "scatter_contour/sc_cd4_LowlyExpanded/",
-      edata = "sc_cd3p_cd4@assays$RNA@data", metadata = "sc_cd3p_cd4_mdata[sc_cd3p_cd4_mdata$cluster %in% c('0', '1', '2', '3', '4', '6', '7', '8', '9', '10', '11'),]", # [sc_cd3p_cd4_mdata$ExpDegree=='low',]
+      edata = "sc_cd3p_cd4@assays$RNA@data", metadata = "sc_cd3p_cd4_mdata[sc_cd3p_cd4_mdata$cluster %in% c('0', '1', '2', '3', '4', '6', '7', '8', '9', '10', '11'),]", # [sc_cd3p_cd4_mdata$expDegree=='Non_expanded',]
       features = x,
       # sample_filter = c("cluster", "0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11"),
-      sample_filter = list(c("ExpDegree", "low"))
-      # sample_filter = setNames(object = list("low", c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11")), c("ExpDegree", "cluster"))
+      sample_filter = list(c("expDegree", "Non_expanded"))
+      # sample_filter = setNames(object = list("Non_expanded", c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11")), c("expDegree", "cluster"))
     )
   })
   pp_contour = fig_plot_contour(fconfigs,
@@ -1338,11 +1193,11 @@ system("ls -loh")
   # sc_cd4_Expanded. Excluding TREGs (cluster 5).
   fconfigs = lapply(tmp, function(x){
     list(result_id = "scatter_contour/sc_cd4_Expanded/",
-      edata = "sc_cd3p_cd4@assays$RNA@data", metadata = "sc_cd3p_cd4_mdata[sc_cd3p_cd4_mdata$cluster %in% c('0', '1', '2', '3', '4', '6', '7', '8', '9', '10', '11'),]", # [sc_cd3p_cd4_mdata$ExpDegree=='high',]
+      edata = "sc_cd3p_cd4@assays$RNA@data", metadata = "sc_cd3p_cd4_mdata[sc_cd3p_cd4_mdata$cluster %in% c('0', '1', '2', '3', '4', '6', '7', '8', '9', '10', '11'),]", # [sc_cd3p_cd4_mdata$expDegree=='Expanded',]
       features = x,
       # sample_filter = c("cluster", c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11")),
-      sample_filter = list(c("ExpDegree", "high"))
-      # sample_filter = setNames(object = list("high", c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11")), c("ExpDegree", "cluster"))
+      sample_filter = list(c("expDegree", "Expanded"))
+      # sample_filter = setNames(object = list("Expanded", c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11")), c("expDegree", "cluster"))
     )
   })
   pp_contour = fig_plot_contour(fconfigs,
@@ -1351,11 +1206,11 @@ system("ls -loh")
   # sc_cd4_NonExpanded. Excluding TREGs (cluster 5).
   fconfigs = lapply(tmp, function(x){
     list(result_id = "scatter_contour/sc_cd4_NonExpanded/",
-      edata = "sc_cd3p_cd4@assays$RNA@data", metadata = "sc_cd3p_cd4_mdata[sc_cd3p_cd4_mdata$cluster %in% c('0', '1', '2', '3', '4', '6', '7', '8', '9', '10', '11'),]", # [sc_cd3p_cd4_mdata$ExpDegree=='low',]
+      edata = "sc_cd3p_cd4@assays$RNA@data", metadata = "sc_cd3p_cd4_mdata[sc_cd3p_cd4_mdata$cluster %in% c('0', '1', '2', '3', '4', '6', '7', '8', '9', '10', '11'),]", # [sc_cd3p_cd4_mdata$expDegree=='Non_expanded',]
       features = x,
       # sample_filter = c("cluster", "0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11"),
-      sample_filter = list(c("ExpDegree", "low"))
-      # sample_filter = setNames(object = list("low", c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11")), c("ExpDegree", "cluster"))
+      sample_filter = list(c("expDegree", "Non_expanded"))
+      # sample_filter = setNames(object = list("Non_expanded", c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11")), c("expDegree", "cluster"))
     )
   })
   pp_contour = fig_plot_contour(fconfigs,
@@ -1365,10 +1220,10 @@ system("ls -loh")
   # Other way of doing the same
     # fconfigs = list(
     #   list(result_id = "scatter_contour/sc_cd4_HighlyExpanded/",
-    #     edata = "sc_cd3p_cd8@assays$RNA@data", metadata = "sc_cd3p_cd8_mdata", filters = list(c("ExpDegree", "high")),
+    #     edata = "sc_cd3p_cd8@assays$RNA@data", metadata = "sc_cd3p_cd8_mdata", filters = list(c("expDegree", "Expanded")),
     #     axis_x = "cluster", features = list(x = c("PRF1"), y = c("GZMA", "GZMB", "TNF", "IFNG"))
     #   ),
-    #   list(result_id = "scatter_contour/sc_cd4_LowlyExpanded/", filters = list(c("celltype", "CD8"), c("ExpDegree", "high")),
+    #   list(result_id = "scatter_contour/sc_cd4_LowlyExpanded/", filters = list(c("celltype", "CD8"), c("expDegree", "Expanded")),
     #     edata = "sc_cd3p@assays$RNA@data", metadata = "sc_cd3p_tcr",
     #     axis_x = "cluster", features = list(x = c("IFNG"), y = c("TNF", "PRF1"))
     #   )
@@ -1379,7 +1234,7 @@ system("ls -loh")
   # Adjust the metadata
   sc_cd3p_cd8_mdata <- sc_cd3p_cd8@meta.data
   sc_cd3p_cd8_mdata <- sc_cd3p_cd8_mdata[!is.na(sc_cd3p_cd8_mdata$clon.size.tag),]
-  sc_cd3p_cd8_mdata$ExpDegree <- ifelse(sc_cd3p_cd8_mdata$clon.size.tag > 4, "high", "low")
+
   # Create PDCD1_tag to compare PDCD1p vs PDCD1n
   PDCD1_tag_tmp <- as.matrix(sc_cd3p_cd8@assays$RNA@data["PDCD1",]) > 0
   PDCD1_cells <- colnames(sc_cd3p_cd8@assays$RNA@data)
@@ -1396,9 +1251,9 @@ system("ls -loh")
   # sc_cd8_HighlyExpanded.
   fconfigs = lapply(tmp, function(x){
     list(result_id = "scatter_contour/sc_cd8_HighlyExpanded/",
-      edata = "sc_cd3p_cd8@assays$RNA@data", metadata = "sc_cd3p_cd8_mdata", # [sc_cd3p_cd4_mdata$ExpDegree=='high',]
+      edata = "sc_cd3p_cd8@assays$RNA@data", metadata = "sc_cd3p_cd8_mdata", # [sc_cd3p_cd4_mdata$expDegree=='Expanded',]
       features = x,
-      sample_filter = list(c("ExpDegree", "high"))
+      sample_filter = list(c("expDegree", "Expanded"))
     )
   })
   pp_contour = fig_plot_contour(fconfigs,
@@ -1407,9 +1262,9 @@ system("ls -loh")
   # sc_cd8_LowlyExpanded.
   fconfigs = lapply(tmp, function(x){
     list(result_id = "scatter_contour/sc_cd8_LowlyExpanded/",
-      edata = "sc_cd3p_cd8@assays$RNA@data", metadata = "sc_cd3p_cd8_mdata", # [sc_cd3p_cd4_mdata$ExpDegree=='high',]
+      edata = "sc_cd3p_cd8@assays$RNA@data", metadata = "sc_cd3p_cd8_mdata", # [sc_cd3p_cd4_mdata$expDegree=='Expanded',]
       features = x,
-      sample_filter = list(c("ExpDegree", "low"))
+      sample_filter = list(c("expDegree", "Non_expanded"))
     )
   })
   pp_contour = fig_plot_contour(fconfigs,
@@ -1418,7 +1273,7 @@ system("ls -loh")
   # sc_cd8_All.
   fconfigs = lapply(tmp, function(x){
     list(result_id = "scatter_contour/sc_cd8_All/",
-      edata = "sc_cd3p_cd8@assays$RNA@data", metadata = "sc_cd3p_cd8_mdata", # [sc_cd3p_cd4_mdata$ExpDegree=='high',]
+      edata = "sc_cd3p_cd8@assays$RNA@data", metadata = "sc_cd3p_cd8_mdata", # [sc_cd3p_cd4_mdata$expDegree=='Expanded',]
       features = x
     )
   })
@@ -1800,99 +1655,10 @@ system("ls -loh")
     dev.off()
   }
 
-  # ----> Stacked Barplot - clonotypes per donor
 
-{ cat(redb("### GG-paired plots ### %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
-  library(ggpubr)
-  dir.create("heatmaps")
-
-  # ---> PDCD1n and PDCD1p Gene expression (CD8)
-
-  tmp <- as.matrix(sc_cd3p_cd8@assays$RNA["PDCD1",])
-  cells <- colnames(sc_cd3p_cd8@assays$RNA["PDCD1",])
-  PDCD1p_cells <- cells[tmp>0]
-  PDCD1n_cells <- cells[tmp==0]
-
-  genes <- c("CCL4", "GZMK", "GZMA", "HLA-DRB1", "HLA-DPA1", "HLA-DRA", "CCL5", "COTL1", "TOX", "ITM2A", "IFNG", "CD2", "TIGIT",
-  "PRDM1", "ICOS", "LAG3", "CCL3", "EOMES", "XCL2", "TNF", "ITGAE", "CCR5", "FASLG", "ARAP2", "CD70", "IL32", "CD44", "TANK", "PRF1",
-  "SLAMF7", "CRTAM", "TNFRSF9", "TNFSF9", "CCR2", "CCR4", "CTLA4", "MAF")
-  donors <- c("BT5", "BT1", "BT7", "BT4", "BT3", "BT8", "BT2", "BT18", "BT12", "BT11", "BT15", "BT17_brain", "BT13", "BT9", "BT10", "BT21", "BT25", "BT26", "BT23", "BT20", "BT19", "BT24", "BT27", "BT22")
-
-  df <- c()
-  # donor <- "BT5"
-  for (donor in donors){
-    donor_cells <- rownames(sc_cd3p_cd8@meta.data[sc_cd3p_cd8@meta.data$orig.donor == donor & !is.na(sc_cd3p_cd8@meta.data$orig.donor),])
-    # PDCD1p cells
-    PDCD1p_exp <- sc_cd3p_cd8@assays$RNA[genes,intersect(PDCD1p_cells,donor_cells)]
-    PDCD1p_exp <- apply(PDCD1p_exp, MARGIN=1, FUN=function(x){
-      pCells <- 100*sum(x>0)/length(x)
-    })
-    # PDCD1n cells
-    PDCD1n_exp <- sc_cd3p_cd8@assays$RNA[genes,intersect(PDCD1n_cells,donor_cells)]
-    PDCD1n_exp <- apply(PDCD1n_exp, MARGIN=1, FUN=function(x){
-      pCells <- 100*sum(x>0)/length(x)
-    })
-    tmp <- data.frame(donor,PDCD1p_exp,PDCD1n_exp, genes)
-    df <- rbind(df,tmp)
-  }
-  colnames(df) <- c("donor","PDCD1p","PDCD1n","genes")
-
-  # Plot
-  pdf("heatmaps/paired_dots_percentage.pdf", 15, 15)
-  ggpaired(df, cond1 = "PDCD1n", cond2 = "PDCD1p", line.color = "gray", #color = "condition",
-    fill = "condition", facet.by = "genes", palette = "jco", ylab = "Percentage")
-  dev.off()
-
-  # ---> PDCD1n and PDCD1p clonal expansion percentage (%) (CD8)
-
-  mdata_sc_cd3p_cd8 <- sc_cd3p_cd8@meta.data
-  PDCD1_tag_tmp <- as.matrix(sc_cd3p_cd8@assays$RNA@data["PDCD1",]) > 0
-  PDCD1_cells <- colnames(sc_cd3p_cd8@assays$RNA@data)
-  mdata_sc_cd3p_cd8[PDCD1_cells, "PDCD1_tag_tmp"] <- PDCD1_tag_tmp
-  mdata_sc_cd3p_cd8 <- mdata_sc_cd3p_cd8 %>% mutate(PDCD1_tag = case_when(
-    PDCD1_tag_tmp > 0 ~ "PDCD1p",
-    PDCD1_tag_tmp == 0 ~ "PDCD1n"
-  ))
-  mdata_sc_cd3p_cd8$expansion_tag <- ifelse(mdata_sc_cd3p_cd8$clon.size.tag > 1, TRUE, FALSE)
-
-  library(tidyr)
-  df <- mdata_sc_cd3p_cd8 %>% filter(!is.na(expansion_tag) & !is.na(mdata_sc_cd3p_cd8$orig.donor)) %>% group_by(orig.donor, PDCD1_tag, expansion_tag) %>% summarize(n=n()) %>% ungroup() %>%
-    group_by(orig.donor, PDCD1_tag) %>% summarize(pct_exp_cells = 100*n[2]/sum(n))  %>%
-    pivot_wider(names_from = PDCD1_tag, values_from = pct_exp_cells)
-
-  write.csv(df, file = "heatmaps/paired_dots_PDCD1_expansion_pct.csv", row.names = FALSE)
-
-  # Plot
-  pdf("heatmaps/paired_dots_PDCD1_expansion_pct.pdf", 15, 15)
-  ggpaired(df, cond1 = "PDCD1n", cond2 = "PDCD1p", line.color = "gray", #color = "condition",
-    fill = "condition", palette = "jco", ylab = "Percentage of Expansion")
-  dev.off()
-
-  # sc_cd3p_cd8_donor_mdata <- sc_cd3p_cd8@meta.data[intersect(PDCD1p_cells,donor_cells),]
-
-  # df <- c()
-  # # donor <- "BT5"
-  # for (donor in donors){
-  #   donor_cells <- rownames(sc_cd3p_cd8@meta.data[sc_cd3p_cd8@meta.data$orig.donor == donor & !is.na(sc_cd3p_cd8@meta.data$orig.donor),])
-  #   # PDCD1p cells
-  #   sc_cd3p_cd8_donor_mdata <- sc_cd3p_cd8@meta.data[intersect(PDCD1p_cells,donor_cells),]
-  #
-  #   # PDCD1p_exp <- apply(PDCD1p_exp, MARGIN=1, FUN=function(x){
-  #   #   pCells <- 100*sum(x>0)/length(x)
-  #   # })
-  #   # PDCD1n cells
-  #   PDCD1n_exp <- sc_cd3p_cd8@assays$RNA[genes,intersect(PDCD1n_cells,donor_cells)]
-  #   PDCD1n_exp <- apply(PDCD1n_exp, MARGIN=1, FUN=function(x){
-  #     pCells <- 100*sum(x>0)/length(x)
-  #   })
-  #   tmp <- data.frame(donor,PDCD1p_exp,PDCD1n_exp, genes)
-  #   df <- rbind(df,tmp)
-  # }
-  # colnames(df) <- c("donor","PDCD1p","PDCD1n","genes")
-
-  ########################
-  # Clonotyper per donor #
-  ########################
+  #########################################
+  # Stacked Barplots Clonotyper per donor #
+  #########################################
 
   # Get PDCD1 %pct of the clonotypes per donor
   sc_cd3p_cd4@meta.data$tag_PDCD1 <- add_gene_tag(c("PDCD1"), sc_cd3p_cd4@meta.data, sc_cd3p_cd4@assays$RNA@data, thresh = 0, tag = c('tag', 'p', 'n'))
@@ -1955,13 +1721,12 @@ system("ls -loh")
   }
 
   # --------> Clone Size
-
+  library("grid")
 
   # obj <- sc_cd3p_cd4
   all.clonotypes <- lapply(X = srt.objs.list, FUN = function(obj){
     meta.data <- as.data.table(obj@meta.data)
 
-    # Identify x top clonally expanded clonotypes.
     tmp.data.1 <- meta.data[!is.na(orig.donor) & !is.na(clonotype.tag), .(cell.count=.N, PDCD1_pct_byDonor=unique(PDCD1_pct_byDonor)), by=.(donor=orig.donor, clonotype=clonotype.tag)]
     setorderv(x=tmp.data.1, cols='cell.count', order=-1) # Maybe want to order by PDCD1_pct_byDonor as a 2nd variable
     uniq.donors <- tmp.data.1[, unique(donor)]
@@ -1982,29 +1747,162 @@ system("ls -loh")
   # tmp.clones <- all.clonotypes[[1]]
   for (i in 1:length(all.clonotypes)) {
     celltype <- str_extract(string = names(all.clonotypes[i]), pattern = "CD(4|8)")
-    pdf(paste0("tcr/cellCount_allClones_PBT_",celltype,".pdf"))
     tmp.y.axis <- "Number of cells"
     tmp.x.axis <- "Patients"
     tmp.title <- paste("",celltype,"clones in brain tumors")
     tmp.clones <- all.clonotypes[[i]]
-    print(ggplot(tmp.clones, aes(x = donor, y = cell.count, fill = PDCD1_pct_byDonor, group = -cell.count)) + #, colour = PDCD1_pct_byDonor
+    pdf(paste0("tcr/cellCount_allClones_PBT_",celltype,".pdf"))
+    plot <- ggplot(tmp.clones, aes(x = donor, y = cell.count, fill = PDCD1_pct_byDonor, group = -cell.count)) + #, colour = PDCD1_pct_byDonor
       geom_bar(stat = "identity") +     # scale_colour_gradient(low = "yellow", high = "red", na.value = NA) +
       scale_fill_gradient(low = "yellow", high = "red", na.value = NA) +
       labs(x = tmp.x.axis, y = tmp.y.axis, fill = "PDCD1(%)", title = tmp.title) +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=10), panel.background = element_blank()))
+      theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=10), panel.background = element_blank())
+    print(plot)
     dev.off()
     pdf(paste0("tcr/cellCount_allClones_PBT_",celltype,"_noColor.pdf"))
-    print(ggplot(tmp.clones, aes(x = donor, y = cell.count, color = "gray35", group = -cell.count)) + #, colour = PDCD1_pct_byDonor
+    plot <- ggplot(tmp.clones, aes(x = donor, y = cell.count, color = "gray35", group = -cell.count)) + #, colour = PDCD1_pct_byDonor
       geom_bar(stat = "identity", color = "gray60") +     # scale_colour_gradient(low = "yellow", high = "red", na.value = NA) +
       labs(x = tmp.x.axis, y = tmp.y.axis, title = tmp.title) +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=10), panel.background = element_blank()))
+      theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=10), panel.background = element_blank())
+    print(plot)
     dev.off()
   }
+
+  # Back-to-back barplot
+
+  plot <- ggplot(tmp.clones, aes(x = donor, y = cell.count, color = "gray35", group = -cell.count)) + #, colour = PDCD1_pct_byDonor
+    geom_bar(stat = "identity", color = "gray60") +     # scale_colour_gradient(low = "yellow", high = "red", na.value = NA) +
+    labs(x = tmp.x.axis, y = tmp.y.axis, title = tmp.title) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=10), panel.background = element_blank())
+  print(plot)
+
+  ###
+  # tmp.title <- paste("CD4 and CD8 clones in brain tumors")
+  pdf(paste0("tcr/cellCount_allClones_PBT_CD4_CD8_noColor.pdf"))
+  tmp.y.axis <- "CD4 cells"
+  tmp.x.axis <- "Patient"
+  p1 <- ggplot(all.clonotypes[["CD4"]], aes(x = donor, y = cell.count, color = "gray35", group = -cell.count)) + geom_bar(stat = "identity", color = "gray60") +
+    labs(x = tmp.x.axis, y = tmp.y.axis) +
+    scale_y_reverse(limits = c(2000,0)) + coord_flip() +
+    theme(panel.spacing.x = unit(0, "mm")) + theme_classic() +
+    theme(plot.margin = unit(c(5.5, 0, 5.5, 5.5), "pt")) #+ # ,expand = expand_scale(mult= c(c(0.05,0)))
+    # theme(panel.spacing.x = unit(0, "mm"))
+
+  tmp.y.axis <- "CD8 cells"
+  p2 <- ggplot(all.clonotypes[["CD8"]], aes(x = donor, y = cell.count, color = "gray35", group = -cell.count)) + geom_bar(stat = "identity", color = "gray60") +
+    labs(x = tmp.x.axis, y = tmp.y.axis) +
+    scale_y_continuous(limits = c(0,2000)) + coord_flip() +
+    theme(panel.spacing.x = unit(0, "mm")) + theme_classic() +
+    theme(axis.title.y=element_blank(), axis.text.y=element_blank(),
+          axis.line.y = element_blank(), axis.ticks.y=element_blank(),
+          plot.margin = unit(c(5.5, 15.5, 5.5, -10), "pt"))
+
+  # p2 <- ggplot(df[df$test != 'p',], aes(x=Description, y= value)) + geom_col(fill='blue') +
+  #   scale_y_continuous(name = "axis2", breaks = seq(0.025, 0.125, 0.025) ,expand = expand_scale(mult= c(c(0,0.05)))) +
+  #   coord_flip() +
+  #   theme(panel.spacing.x = unit(0, "mm")) + theme_minimal() +
+  #   theme(axis.title.y=element_blank(), axis.text.y=element_blank(),
+  #         axis.line.y = element_blank(), axis.ticks.y=element_blank(),
+  #         plot.margin = unit(c(5.5, 5.5, 5.5, -3.5), "pt"))
+
+  grid.newpage()
+  grid.draw(cbind(ggplotGrob(p1), ggplotGrob(p2), size = "last"))
+
+  # print(p1)
+  dev.off()
+
+{ cat(redb("### GG-paired plots ### %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
+  library(ggpubr)
+  dir.create("heatmaps")
+
+  # ---> PDCD1n and PDCD1p Gene expression (CD8)
+
+  tmp <- as.matrix(sc_cd3p_cd8@assays$RNA["PDCD1",])
+  cells <- colnames(sc_cd3p_cd8@assays$RNA["PDCD1",])
+  PDCD1p_cells <- cells[tmp>0]
+  PDCD1n_cells <- cells[tmp==0]
+
+  genes <- c("CCL4", "GZMK", "GZMA", "HLA-DRB1", "HLA-DPA1", "HLA-DRA", "CCL5", "COTL1", "TOX", "ITM2A", "IFNG", "CD2", "TIGIT",
+  "PRDM1", "ICOS", "LAG3", "CCL3", "EOMES", "XCL2", "TNF", "ITGAE", "CCR5", "FASLG", "ARAP2", "CD70", "IL32", "CD44", "TANK", "PRF1",
+  "SLAMF7", "CRTAM", "TNFRSF9", "TNFSF9", "CCR2", "CCR4", "CTLA4", "MAF")
+  donors <- c("BT5", "BT1", "BT7", "BT4", "BT3", "BT8", "BT2", "BT18", "BT12", "BT11", "BT15", "BT17_brain", "BT13", "BT9", "BT10", "BT21", "BT25", "BT26", "BT23", "BT20", "BT19", "BT24", "BT27", "BT22")
+
+  df <- c()
+  # donor <- "BT5"
+  for (donor in donors){
+    donor_cells <- rownames(sc_cd3p_cd8@meta.data[sc_cd3p_cd8@meta.data$orig.donor == donor & !is.na(sc_cd3p_cd8@meta.data$orig.donor),])
+    # PDCD1p cells
+    PDCD1p_exp <- sc_cd3p_cd8@assays$RNA[genes,intersect(PDCD1p_cells,donor_cells)]
+    PDCD1p_exp <- apply(PDCD1p_exp, MARGIN=1, FUN=function(x){
+      pCells <- 100*sum(x>0)/length(x)
+    })
+    # PDCD1n cells
+    PDCD1n_exp <- sc_cd3p_cd8@assays$RNA[genes,intersect(PDCD1n_cells,donor_cells)]
+    PDCD1n_exp <- apply(PDCD1n_exp, MARGIN=1, FUN=function(x){
+      pCells <- 100*sum(x>0)/length(x)
+    })
+    tmp <- data.frame(donor,PDCD1p_exp,PDCD1n_exp, genes)
+    df <- rbind(df,tmp)
+  }
+  colnames(df) <- c("donor","PDCD1p","PDCD1n","genes")
+
+  # Plot
+  pdf("heatmaps/paired_dots_percentage.pdf", 15, 15)
+  ggpaired(df, cond1 = "PDCD1n", cond2 = "PDCD1p", line.color = "gray", #color = "condition",
+    fill = "condition", facet.by = "genes", palette = "jco", ylab = "Percentage")
+  dev.off()
+
+  # ---> PDCD1n and PDCD1p clonal expansion percentage (%) (CD8)
+
+  mdata_sc_cd3p_cd8 <- sc_cd3p_cd8@meta.data
+  PDCD1_tag_tmp <- as.matrix(sc_cd3p_cd8@assays$RNA@data["PDCD1",]) > 0
+  PDCD1_cells <- colnames(sc_cd3p_cd8@assays$RNA@data)
+  mdata_sc_cd3p_cd8[PDCD1_cells, "PDCD1_tag_tmp"] <- PDCD1_tag_tmp
+  mdata_sc_cd3p_cd8 <- mdata_sc_cd3p_cd8 %>% mutate(PDCD1_tag = case_when(
+    PDCD1_tag_tmp > 0 ~ "PDCD1p",
+    PDCD1_tag_tmp == 0 ~ "PDCD1n"
+  ))
+  mdata_sc_cd3p_cd8$expansion_tag <- ifelse(mdata_sc_cd3p_cd8$clon.size.tag > 1, TRUE, FALSE)
+
+  library(tidyr)
+  df <- mdata_sc_cd3p_cd8 %>% filter(!is.na(expansion_tag) & !is.na(mdata_sc_cd3p_cd8$orig.donor)) %>% group_by(orig.donor, PDCD1_tag, expansion_tag) %>% summarize(n=n()) %>% ungroup() %>%
+    group_by(orig.donor, PDCD1_tag) %>% summarize(pct_exp_cells = 100*n[2]/sum(n))  %>%
+    pivot_wider(names_from = PDCD1_tag, values_from = pct_exp_cells)
+
+  write.csv(df, file = "heatmaps/paired_dots_CD8_PDCD1_expansion_pct.csv", row.names = FALSE)
+
+  # Plot
+  pdf("heatmaps/paired_dots_CD8_PDCD1_expansion_pct.pdf", 15, 15)
+  ggpaired(df, cond1 = "PDCD1n", cond2 = "PDCD1p", line.color = "gray", #color = "condition",
+    fill = "condition", palette = "jco", ylab = "Percentage of Expansion")
+  dev.off()
+
+  # sc_cd3p_cd8_donor_mdata <- sc_cd3p_cd8@meta.data[intersect(PDCD1p_cells,donor_cells),]
+
+  # df <- c()
+  # # donor <- "BT5"
+  # for (donor in donors){
+  #   donor_cells <- rownames(sc_cd3p_cd8@meta.data[sc_cd3p_cd8@meta.data$orig.donor == donor & !is.na(sc_cd3p_cd8@meta.data$orig.donor),])
+  #   # PDCD1p cells
+  #   sc_cd3p_cd8_donor_mdata <- sc_cd3p_cd8@meta.data[intersect(PDCD1p_cells,donor_cells),]
+  #
+  #   # PDCD1p_exp <- apply(PDCD1p_exp, MARGIN=1, FUN=function(x){
+  #   #   pCells <- 100*sum(x>0)/length(x)
+  #   # })
+  #   # PDCD1n cells
+  #   PDCD1n_exp <- sc_cd3p_cd8@assays$RNA[genes,intersect(PDCD1n_cells,donor_cells)]
+  #   PDCD1n_exp <- apply(PDCD1n_exp, MARGIN=1, FUN=function(x){
+  #     pCells <- 100*sum(x>0)/length(x)
+  #   })
+  #   tmp <- data.frame(donor,PDCD1p_exp,PDCD1n_exp, genes)
+  #   df <- rbind(df,tmp)
+  # }
+  # colnames(df) <- c("donor","PDCD1p","PDCD1n","genes")
 
 
 }
 
-{ cat(redb("### Heatmaps ### %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
+{ cat(redb("### Heatmaps ### %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
   dir.create("heatmaps")
   require(tidyverse)
   require(pheatmap)
@@ -2028,11 +1926,11 @@ system("ls -loh")
   genes_HG_unique <- setdiff(genes_HG_all, genes_LG_HG_shared)
   genes <- c(genes_LG_HG_shared, genes_LG_unique, genes_HG_unique)
 
-  # Iterate over the 4 combination of grade and expansion ("LowExp_LG", "LowExp_HG", "HighExp_LG", "HighExp_HG")
+  # Iterate over the 4 combination of grade and expansion ("NonExp_LG", "NonExp_HG", "Exp_LG", "Exp_HG")
   mean_matrix <- c()
   pct_matrix <- c()
 
-  tmp <- c("LowExp_LG", "LowExp_HG", "HighExp_LG", "HighExp_HG")
+  tmp <- c("NonExp_LG", "NonExp_HG", "Exp_LG", "Exp_HG")
   for (i in tmp){
     # ---> 2. Get Cells
     cells <- rownames(sc_cd3p_cd8@meta.data[!is.na(sc_cd3p_cd8@meta.data$expDegree) & sc_cd3p_cd8@meta.data$expDegree == i,])
@@ -2054,8 +1952,8 @@ system("ls -loh")
 
   row_tags = data.frame("Group" = c(rep(c("shared-DEGs", "LG-DEGs", "HG-DEGs"), times=c(length(genes_LG_HG_shared), length(genes_LG_unique), length(genes_HG_unique))) )); rownames(row_tags) <- genes
 
-  pdf(paste0("heatmaps/",'CD8_HighExp_DEGs_meanMatrix', thold,'.pdf'))
-  pheatmap(mean_matrix,main = "Mean Expression HighExp DEGs (CD8+)", cluster_cols = F, cluster_rows = F,
+  pdf(paste0("heatmaps/",'CD8_Expanded_DEGs_meanMatrix', thold,'.pdf'))
+  pheatmap(mean_matrix,main = "Mean Expression Expanded DEGs (CD8+)", cluster_cols = F, cluster_rows = F,
          display_numbers = FALSE,
          show_rownames = FALSE,
          number_color = "black",
@@ -2064,8 +1962,8 @@ system("ls -loh")
          fontsize_number = 7)
   dev.off()
 
-  pdf(paste0("heatmaps/",'CD8_HighExp_DEGs_pctMatrix', thold,'.pdf'))
-  pheatmap(pct_matrix,main = "% Expression HighExp DEGs (CD8+)", cluster_cols = F, cluster_rows = F,
+  pdf(paste0("heatmaps/",'CD8_Expanded_DEGs_pctMatrix', thold,'.pdf'))
+  pheatmap(pct_matrix,main = "% Expression Expanded DEGs (CD8+)", cluster_cols = F, cluster_rows = F,
         display_numbers = FALSE,
         show_rownames = FALSE,
         number_color = "black",
@@ -2092,11 +1990,11 @@ system("ls -loh")
   genes_HG_unique <- setdiff(genes_HG_all, genes_LG_HG_shared)
   genes <- c(genes_LG_HG_shared, genes_LG_unique, genes_HG_unique)
 
-  # Iterate over the 4 combination of grade and expansion ("LowExp_LG", "LowExp_HG", "HighExp_LG", "HighExp_HG")
+  # Iterate over the 4 combination of grade and expansion ("NonExp_LG", "NonExp_HG", "Exp_LG", "Exp_HG")
   mean_matrix <- c()
   pct_matrix <- c()
 
-  tmp <- c("LowExp_LG", "LowExp_HG", "HighExp_LG", "HighExp_HG")
+  tmp <- c("NonExp_LG", "NonExp_HG", "Exp_LG", "Exp_HG")
   for (i in tmp){
     # ---> 2. Get Cells
     cells <- rownames(sc_cd3p_cd4@meta.data[!is.na(sc_cd3p_cd4@meta.data$expDegree) & sc_cd3p_cd4@meta.data$expDegree == i & sc_cd3p_cd4@meta.data$cluster %in% c("0", "1", "2", "3", "4", "6", "7", "8", "9", "10", "11"),])
@@ -2118,8 +2016,8 @@ system("ls -loh")
 
   row_tags = data.frame("Group" = c(rep(c("shared-DEGs", "LG-DEGs", "HG-DEGs"), times=c(length(genes_LG_HG_shared), length(genes_LG_unique), length(genes_HG_unique))) )); rownames(row_tags) <- genes
 
-  pdf(paste0("heatmaps/",'CD4_HighExp_DEGs_meanMatrix', thold,'.pdf'))
-  pheatmap(mean_matrix,main = "Mean Expression HighExp DEGs (CD4+)", cluster_cols = F, cluster_rows = F,
+  pdf(paste0("heatmaps/",'CD4_Expanded_DEGs_meanMatrix', thold,'.pdf'))
+  pheatmap(mean_matrix,main = "Mean Expression Expanded DEGs (CD4+)", cluster_cols = F, cluster_rows = F,
          display_numbers = FALSE,
          show_rownames = FALSE,
          number_color = "black",
@@ -2128,8 +2026,8 @@ system("ls -loh")
          fontsize_number = 7)
   dev.off()
 
-  pdf(paste0("heatmaps/",'CD4_HighExp_DEGs_pctMatrix', thold,'.pdf'))
-  pheatmap(pct_matrix,main = "% Expression HighExp DEGs (CD4+)", cluster_cols = F, cluster_rows = F,
+  pdf(paste0("heatmaps/",'CD4_Expanded_DEGs_pctMatrix', thold,'.pdf'))
+  pheatmap(pct_matrix,main = "% Expression Expanded DEGs (CD4+)", cluster_cols = F, cluster_rows = F,
         display_numbers = FALSE,
         show_rownames = FALSE,
         number_color = "black",
