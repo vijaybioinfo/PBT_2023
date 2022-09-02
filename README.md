@@ -47,7 +47,7 @@ Usage & Citation
 
 If you want to clone this repository run:
 ```bash
-git clone https://github.com/vijaybioinfo/PEDIATRIC_BRAIN_TUMORS.git
+git clone https://github.com/vijaybioinfo/PBT_2022.git
 ```
 Please cite the following manuscript if you are using this repository:
 
