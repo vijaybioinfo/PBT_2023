@@ -8,7 +8,7 @@ Brain tumors are the most common solid tumors in children and outcomes remain di
 
 In order to evaluate anti-tumor immune response in pediatric brain tumors, we performed single-cell RNA sequencing (scRNA-seq) and paired single-cell TCR sequencing (scTCR-seq) of patient-derived brain tumor-infiltrating T cells to couple T cell molecular program with TCR repertoire and clonality. We generated single-cell transcriptomic profiles of FACS-sorted T cells isolated from brain tumors of 24 pediatric patients with varying diagnoses and histological grades, those being: Pilocytic astrocytoma, Ganglioglioma, Diffuse astrocytoma, Craniopharryngioma, Choroid plexus papilloma, High grade glioma, Medulloblastoma and Anaplastic ependymoma.  
 
-This repository contains the scripts used to analyze the previous samples, focusing on: CD4+ and CD8+ T cells.  
+This repository contains the scripts used to analyze the aforementioned samples focusing on: CD4+ and CD8+ T cells.  
 
 Requirements
 ------------
