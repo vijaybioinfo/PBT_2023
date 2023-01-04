@@ -22,7 +22,7 @@ This project was done using the following modules/programs:
 
 Data
 ------------
-Raw data files and the metadata can be downloaded though the following GEO accession number: [GSE]()
+Raw data files and the metadata can be downloaded though the following GEO accession number: [GSE221776](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE221776)
 
 Data pre-processing
 ------------
