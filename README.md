@@ -22,11 +22,11 @@ This project was done using the following modules/programs:
 * [Scrublet](https://github.com/swolock/scrublet/blob/master/README.md) (v0.2.3)
 * [Seurat](https://satijalab.org/seurat) (v3.1.5)
 
-Data
+Raw data
 ------------
 The corresponding raw files and precessed files can be downloaded through the following GEO accession number: [GSE221776](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE221776)
 
-Data pre-processing
+Raw data pre-processing
 ------------
 
 * To do the 10x demultiplexing and mapping just pull [our in-house pipeline](https://github.com/vijaybioinfo/cellranger_wrappeR) using Cell Ranger.
@@ -36,9 +36,9 @@ Data pre-processing
 * To generate the clustering of single-cell data just pull [our in-house pipeline](https://github.com/vijaybioinfo/clustering) using Seurat.
 * To do the aggregation of VDJ libraries just pull [our in-house pipeline](https://github.com/vijaybioinfo/VDJ_aggr).
 
-> All relevant scripts all located in ./pre-processing  
+For more specific information about the data generation and processing, please check the "methods" section within the manuscript.  
 
-For more specific information about the data generation and processing, please check the "methods" section within the manuscript.
+> All relevant scripts all located in ./pre-processing  
 
 Figures
 ------------
