@@ -24,7 +24,11 @@ This project was done using the following modules/programs:
 
 Raw data
 ------------
-The corresponding raw files and precessed files can be downloaded through the following GEO accession number: [GSE221776](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE221776)
+The single-cell RNA-seq raw and processed files can be downloaded through the following GEO accession number: [GSE221776](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE221776). 
+
+For survival analysis, bulk RNA-se data from the Pediatric Brain Tumor Atlas (PBTA) were downloaded from the [Gabriella Miller Kids First Data Resource Portal](https://portal.kidsfirstdrc.org/login) through the [CAVATICA](https://www.cavatica.org/) cloud-based platform, and clinical data were accessed using [PedcBioPortal](https://pedcbioportal.kidsfirstdrc.org/).
+
+
 
 Raw data pre-processing
 ------------
