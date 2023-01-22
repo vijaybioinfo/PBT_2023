@@ -51,7 +51,7 @@ Figures
 Downstream Analysis
 ------------
 * DGEA - You can follow [our in-house pipeline](https://github.com/vijaybioinfo/dgea)
-* [GLIPH2](http://50.255.35.37:8080/)
+* [GLIPH2](http://50.255.35.37:8080/) - Clustering of CDR3β sequences
 > All relevant scripts all located in ./downstream_analysis
 
 
