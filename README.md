@@ -26,11 +26,11 @@ Raw data
 ------------
 The single-cell RNA-seq raw and processed files can be downloaded through the following GEO accession number: [GSE221776](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE221776). 
 
-For survival analysis, bulk RNA-se data from the Pediatric Brain Tumor Atlas (PBTA) were downloaded from the [Gabriella Miller Kids First Data Resource Portal](https://portal.kidsfirstdrc.org/login) through the [CAVATICA](https://www.cavatica.org/) cloud-based platform, and clinical data were accessed using [PedcBioPortal](https://pedcbioportal.kidsfirstdrc.org/).
+For survival analysis, bulk RNA-seq data from the Pediatric Brain Tumor Atlas (PBTA) were downloaded from the [Gabriella Miller Kids First Data Resource Portal](https://portal.kidsfirstdrc.org/login) through the [CAVATICA](https://www.cavatica.org/) cloud-based platform, and clinical data were accessed using [PedcBioPortal](https://pedcbioportal.kidsfirstdrc.org/). For more specific information about the data processing, please check the "methods" section within the manuscript.  
 
 
 
-Raw data pre-processing
+Raw data pre-processing (sibgle-cell)
 ------------
 
 * To do the 10x demultiplexing and mapping just pull [our in-house pipeline](https://github.com/vijaybioinfo/cellranger_wrappeR) using Cell Ranger.
