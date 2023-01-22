@@ -42,7 +42,7 @@ Raw data pre-processing
 * To generate the clustering of single-cell data just pull [our in-house pipeline](https://github.com/vijaybioinfo/clustering) using Seurat.
 * To do the aggregation of VDJ libraries just pull [our in-house pipeline](https://github.com/vijaybioinfo/VDJ_aggr).  
 
-> All relevant scripts all located in ./pre-processing  
+> Relevant scripts all located in: ./pre-processing  
 
 For more specific information about the data generation and processing, please check the "methods" section within the manuscript.  
 
@@ -52,14 +52,14 @@ Patients diagnosed with High-Grade Gliomas (HGG; n=120) with records of age (<20
 
 Figures
 ------------
-> All relevant scripts all located in ./figures
+> Relevant scripts all located in: ./figures
 
 
 Downstream Analysis
 ------------
 * DGEA - You can follow [our in-house pipeline](https://github.com/vijaybioinfo/dgea)
 * [GLIPH2](http://50.255.35.37:8080/) - Clustering of CDR3β sequences
-> All relevant scripts all located in ./downstream_analysis
+> Relevant scripts all located in: ./downstream_analysis
 
 
 Usage & Citation
