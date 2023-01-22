@@ -1,0 +1,67 @@
+project: clone_size
+method: mastlog2cpm
+metadata: /home/kmlanderos/kmlanderos/pbtumor-all/results/DICE_lung/figures/data/cs_thold2_dgea_PBT_LUNG_mdata.rds
+expression_data: /home/kmlanderos/kmlanderos/pbtumor-all/results/figures/data/.object_stem_seurat_cs_thold2.rds
+output_dir: /home/kmlanderos/ad_hoc/pbtumor-all/results/DICE_lung/dgea
+comparisons:
+  PBT_CD8_expansion_thold2:
+    context: PBT_CD8_expansion_thold2
+    test_column: expDegree
+    contrast:
+    - Expanded
+    - Non_expanded
+    filters:
+      orig.site: brain
+      orig.Cell.Type: CD8
+    job:
+      mem: 140gb
+  LUNG_CD8_expansion_thold2:
+    context: LUNG_CD8_expansion_thold2
+    test_column: expDegree
+    contrast:
+    - Expanded
+    - Non_expanded
+    filters:
+      orig.site: lung
+      orig.Cell.Type: CD8
+    job:
+      mem: 350gb
+  PBT_CD4_expansion_thold2:
+    context: PBT_CD4_expansion_thold2
+    test_column: expDegree
+    contrast:
+    - Expanded
+    - Non_expanded
+    filters:
+      orig.site: brain
+      orig.Cell.Type: CD4
+    job:
+      mem: 140gb
+  LUNG_CD4_expansion_thold2:
+    context: LUNG_CD4_expansion_thold2
+    test_column: expDegree
+    contrast:
+    - Expanded
+    - Non_expanded
+    filters:
+      orig.site: lung
+      orig.Cell.Type: CD4
+    job:
+      mem: 350gb
+covariates: none
+down_sample: no
+padj_threshold: 0.05
+fc_threshold: 0.25
+ctrans: log2cpm
+colours: ./data/colours_df.csv
+job:
+  template: https://raw.githubusercontent.com/vijaybioinfo/cellranger_wrappeR/main/routine_template.sh
+  main:
+    walltime: '07:00:00'
+    mem: 16gb
+    ppn: 4.0
+    nodes: 1.0
+  depend: none
+  submit: no
+exec: /share/apps/R/3.6.1/bin/Rscript
+script: /home/kmlanderos/scripts/dgea/R/dgea.R

@@ -1,0 +1,19 @@
+---
+project_name: DICElung_PBTCD45pCD3p
+# it can even be a CSV file like the one in a Cell Ranger aggregation
+input_expression: "/mnt/BioAdHoc/Groups/vd-vijay/kmlanderos/pbtumor-all/raw/cellranger/DICE_lung/aggr/DICElung_PBTCD45pCD3p"
+# A table of the metadata per library, or the whole metadata ready
+# it can be multiple file
+metadata:
+  - "/home/kmlanderos/pbtumor-all/info/DICE_lung/metadata_library.csv"
+  - "/home/kmlanderos/large/pbtumor-all/results/DICE_lung/ab_demux/cd3x/DICElung_PBTCD45pCD3p.rds"
+# if you don't add "/" at the end, it will append 'project_name'
+output_dir: "/home/kmlanderos/large/pbtumor-all/results/DICE_lung/quality_control/"
+# A file will sufice; columns must be metrics names in the metadata
+filtering:
+  file: "./data/file.csv"
+  nFeature_RNA: [300, 3000, 1]
+  nCount_RNA: [500, 9000, 1]
+  percent.mt: [-Inf, 10, 1]
+  expr: "!orig.HT_ID.global %in% c('Doublet', 'Negative')"
+...
