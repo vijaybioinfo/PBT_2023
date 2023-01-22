@@ -30,7 +30,7 @@ For survival analysis, bulk RNA-seq data from the Pediatric Brain Tumor Atlas (P
 
 
 
-Raw data pre-processing (sibgle-cell)
+Raw data pre-processing (single-cell)
 ------------
 
 * To do the 10x demultiplexing and mapping just pull [our in-house pipeline](https://github.com/vijaybioinfo/cellranger_wrappeR) using Cell Ranger.
