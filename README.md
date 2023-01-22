@@ -29,24 +29,29 @@ The single-cell RNA-seq raw and processed files can be downloaded through the fo
 For survival analysis, bulk RNA-seq data from the Pediatric Brain Tumor Atlas (PBTA) were downloaded from the [Gabriella Miller Kids First Data Resource Portal](https://portal.kidsfirstdrc.org/login) through the [CAVATICA](https://www.cavatica.org/) cloud-based platform, and clinical data were accessed using [PedcBioPortal](https://pedcbioportal.kidsfirstdrc.org/). For more specific information about the data processing, please check the "methods" section within the manuscript.  
 
 
-
-Raw data pre-processing (single-cell)
+Raw data pre-processing  
 ------------
 
+### Single-cell
 * To do the 10x demultiplexing and mapping just pull [our in-house pipeline](https://github.com/vijaybioinfo/cellranger_wrappeR) using Cell Ranger.
 * To do the donor the multiplexing just pull [our in-house pipeline](https://github.com/vijaybioinfo/ab_capture).
 * To do the single-cell quality control just pull [our in-house pipeline](https://github.com/vijaybioinfo/quality_control).
 * To do the doublet detection use [our in-house pipeline](https://github.com/vijaybioinfo/doublet_detection) using Scrublet. 
 * To generate the clustering of single-cell data just pull [our in-house pipeline](https://github.com/vijaybioinfo/clustering) using Seurat.
-* To do the aggregation of VDJ libraries just pull [our in-house pipeline](https://github.com/vijaybioinfo/VDJ_aggr).
+* To do the aggregation of VDJ libraries just pull [our in-house pipeline](https://github.com/vijaybioinfo/VDJ_aggr).  
+
+> All relevant scripts all located in ./pre-processing  
 
 For more specific information about the data generation and processing, please check the "methods" section within the manuscript.  
 
-> All relevant scripts all located in ./pre-processing  
+### Bulk   
+Patients diagnosed with High-Grade Gliomas (HGG; n=120) with records of age (<20 years old) and sex were considered for the survival analysis. RNA-seq samples of the donors classified as metastasis or with unavailable TUMOR TYPE information were filtered out; samples derived from cell-lines or obtained from the spine region were also excluded. Final list of donor samples can be found in: ./pre-processing 
+
 
 Figures
 ------------
 > All relevant scripts all located in ./figures
+
 
 Downstream Analysis
 ------------
@@ -74,6 +79,7 @@ Current maintainers:
 
 Vijayanand Lab.  
 Division of Vaccine Discovery La Jolla Institute for Immunology La Jolla, CA 92037, USA
+
 
 Contact
 -----------
