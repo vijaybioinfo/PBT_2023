@@ -6,11 +6,11 @@ Description
 
 Brain tumors are the most common solid tumors in children and outcomes remain dismal for a high proportion of patients. Immunotherapies potentiate anti-tumor responses of T cells, however translation of their clinical benefit to pediatric brain tumors has been hindered by a lack of understanding of immune responses within the brain and the relatively small disease population.   
 
-In order to evaluate anti-tumor immune response in pediatric brain tumors (PBT), we performed single-cell RNA sequencing (scRNA-seq) and paired single-cell TCR sequencing (scTCR-seq) of patient-derived brain tumor-infiltrating T cells to couple T cell molecular program with TCR repertoire and clonality. We generated single-cell transcriptomic profiles of FACS-sorted T cells isolated from brain tumors of 38 pediatric patients with varying diagnoses and histological grades, those being: Pilocytic astrocytoma, Ganglioglioma, Diffuse astrocytoma, Craniopharryngioma, Choroid plexus papilloma, High grade glioma, Medulloblastoma, Anaplastic ependymoma, meningioma and Embryonal Tumor with Multilayered Rosettes.
+In order to evaluate anti-tumor immune response in pediatric brain tumors (PBT), we performed single-cell RNA sequencing (scRNA-seq) and paired single-cell TCR sequencing (scTCR-seq) of patient-derived brain tumor-infiltrating T cells to couple T cell molecular program with TCR repertoire and clonality. We generated single-cell transcriptomic profiles of FACS-sorted T cells isolated from brain tumors of 38 pediatric patients with varying diagnoses and histological grades, those being: Pilocytic astrocytoma, Ganglioglioma, Diffuse astrocytoma, Craniopharryngioma, Choroid plexus papilloma, High grade glioma, Medulloblastoma, Anaplastic ependymoma, Meningioma and Embryonal Tumor with Multilayered Rosettes.
 
-In order to prove the importance of neoantigen-reactive T cell gene signatures in survival outcomes, we coupled our data with whole tumor bulk RNA-seq from pediatric tumors and assesed the survival stuatus of patients with high and low values for the gene signatures across time.
+In order to prove the importance of neoantigen-reactive T cell gene signatures in survival outcomes, we used whole tumor bulk RNA-seq from pediatric tumors and assesed the survival stuatus of patients with high and low values for the gene signatures across time.
 
-We then compared proportions of CD4+ TREGs and CD4-CTLs among total CD4+ tumor infiltrating lymphocytes from our pediatric cohort with what is observed in adult brain tumors and showed the differences. Finally, we did scRNA-seq and scTCR-seq of patients (n=10) bearing NSCLC, to compare features of clonally expanded cells and TCR repertoir diversity with what we see in pediatric brain tumors.
+We then compared proportions of CD4+ TREGs and CD4-CTLs among total CD4+ tumor infiltrating lymphocytes from our pediatric cohort with what is observed in adult brain tumors (n=26) and showed the differences. Finally, we did scRNA-seq and scTCR-seq of patients (n=10) bearing NSCLC, to compare features of clonally expanded cells and TCR repertoir diversity with what we see in pediatric brain tumors.
 
 This repository contains the data and scripts used to analyze the aforementioned samples.
 
@@ -31,6 +31,7 @@ Raw data
 
 * For survival analysis, bulk RNA-seq data from the Pediatric Brain Tumor Atlas (PBTA) were downloaded from the [Gabriella Miller Kids First Data Resource Portal](https://portal.kidsfirstdrc.org/login) through the [CAVATICA](https://www.cavatica.org/) cloud-based platform, and clinical data were accessed using [PedcBioPortal](https://pedcbioportal.kidsfirstdrc.org/). For more specific information about the data processing, please check the "methods" section within the manuscript.  
 
+*  Previously published scRNA-seq data (Mathew et.al 2021) of adult high-grade gliomas can be downloaded using the following GEO accession number: [GSE163108](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE163108)
 
 Raw data pre-processing  
 ------------
@@ -60,6 +61,7 @@ Downstream Analysis
 ------------
 * DGEA - You can follow [our in-house pipeline](https://github.com/vijaybioinfo/dgea)
 * [GLIPH2](http://50.255.35.37:8080/) - Clustering of CDR3β sequences
+* vdjtools - TCR diversity estimation
 > Relevant scripts all located in: ./downstream_analysis
 
 
