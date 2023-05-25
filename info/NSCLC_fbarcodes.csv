@@ -1,0 +1,11 @@
+id,name,read,pattern,sequence,feature_type,library_pattern
+lab_id_Human_Hashtag_1,NSCLC_01,R2,5PNNNNNNNNNN(BC),GTCAACTCTTTAGCG,Antibody Capture,R24
+lab_id_Human_Hashtag_2,NSCLC_02,R2,5PNNNNNNNNNN(BC),TGATGGCCTATTGGG,Antibody Capture,R24
+lab_id_Human_Hashtag_3,NSCLC_03,R2,5PNNNNNNNNNN(BC),TTCCGCCTCTCTTTG,Antibody Capture,R24
+lab_id_Human_Hashtag_4,NSCLC_04,R2,5PNNNNNNNNNN(BC),AGTAAGTTCAGCGTA,Antibody Capture,R24
+lab_id_Human_Hashtag_5,NSCLC_05,R2,5PNNNNNNNNNN(BC),AAGTATCGTTTCGCA,Antibody Capture,R24
+lab_id_Human_Hashtag_6,NSCLC_06,R2,5PNNNNNNNNNN(BC),GGTTGCCAGATGTCA,Antibody Capture,R24
+lab_id_Human_Hashtag_7,NSCLC_07,R2,5PNNNNNNNNNN(BC),TGTCTTTCCTGCCAG,Antibody Capture,R24
+lab_id_Human_Hashtag_8,NSCLC_08,R2,5PNNNNNNNNNN(BC),CTCCTCTGCAATTAC,Antibody Capture,R24
+lab_id_Human_Hashtag_9,NSCLC_09,R2,5PNNNNNNNNNN(BC),CAGTAGTCACGGTCA,Antibody Capture,R24
+lab_id_Human_Hashtag_10,NSCLC_10,R2,5PNNNNNNNNNN(BC),ATTGACCCGCGTTAG,Antibody Capture,R24
