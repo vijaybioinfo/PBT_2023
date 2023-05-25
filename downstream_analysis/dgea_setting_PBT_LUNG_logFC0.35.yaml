@@ -1,0 +1,67 @@
+project: PBT_LUNG
+method: mastlog2cpm
+metadata: /home/kmlanderos/tmp_large/pbtumor-all-Batch2/results/figures/data/sc_pbt_lung_Batch1_Batch2_mdata.rds
+expression_data: /home/kmlanderos/tmp_large/pbtumor-all-Batch2/results/figures/data/sc_pbt_lung_Batch1_Batch2_seurat_object.rds
+output_dir: /home/kmlanderos/tmp_large/pbtumor-all-Batch2/results/dgea
+comparisons:
+  CD8_Expansion_PBT:
+    context: CD8_Expansion_PBT
+    test_column: expDegree
+    filters:
+      celltype: CD8
+      orig.site: brain
+    contrast:
+    - Expanded
+    - Non_expanded
+    job:
+      mem: 150gb
+  CD4_Expansion_PBT:
+    context: CD4_Expansion_PBT
+    test_column: expDegree
+    filters:
+      celltype: CD4
+      orig.site: brain
+    contrast:
+    - Expanded
+    - Non_expanded
+    job:
+      mem: 150gb
+  CD8_Expansion_LUNG:
+    context: CD8_Expansion_LUNG
+    test_column: expDegree
+    filters:
+      celltype: CD8
+      orig.site: lung
+    contrast:
+    - Expanded
+    - Non_expanded
+    job:
+      mem: 350gb
+  CD4_Expansion_LUNG:
+    context: CD4_Expansion_LUNG
+    test_column: expDegree
+    filters:
+      celltype: CD4
+      orig.site: lung
+    contrast:
+    - Expanded
+    - Non_expanded
+    job:
+      mem: 150gb
+covariates: none
+down_sample: no
+padj_threshold: 0.05
+fc_threshold: 0.35
+ctrans: log2cpm
+colours: ./data/colours_df.csv
+job:
+  template: https://raw.githubusercontent.com/vijaybioinfo/cellranger_wrappeR/main/routine_template.sh
+  main:
+    walltime: '07:00:00'
+    mem: 16gb
+    ppn: 4.0
+    nodes: 1.0
+  depend: none
+  submit: no
+exec: /share/apps/R/3.6.1/bin/Rscript
+script: /home/kmlanderos/scripts/dgea/R/dgea.R
