@@ -1,0 +1,44 @@
+---
+project_name: CD45pCD3p_CD8_Batch1_Batch2_manuscript_clean1_harmony
+# path to the Cell Ranger ouput; it can even be a CSV file like the one in a Cell Ranger aggregation
+input_expression: "/mnt/bioadhoc-temp/Groups/vd-vijay/kmlanderos/pbtumor-all-Batch2/raw/cellranger/aggr/CD45pCD3p_Batch1_Batch2"
+# A table of the metadata per library, or the whole metadata ready.
+# It can be multiple files: [metadata_lib.csv, demultiplexed_hashtags.rdata]
+metadata: "/home/kmlanderos/tmp_large/pbtumor-all-Batch2/results/clustering/CD45pCD3p_CD8_Batch1_Batch2_manuscript/.object_meta.data_seurat_mean0.01_pct20_pc15.rds"
+# if you don't add "/" at the end, it will append 'project_name'
+output_dir: "/home/kmlanderos/tmp_large/pbtumor-all-Batch2/results/clustering/"
+filtering:
+  subset:
+    RNA_snn_res.0.6:
+    - '-6'
+    - '-10'
+    - '-16'
+    expr: "doublet_scores <= 0.3 & !(orig.HT_ID.global %in% c('Doublet')) & percent.mt <= 10"
+    expre: "(nCount_RNA >= 1000 & nCount_RNA <= 9000 & nFeature_RNA >= 800 & nFeature_RNA <= 3000 & (orig.Patient_Cohort == 'Cohort1' | origlib == 'AdUp05_Hu_CD4_9D_Gex' )) | (nCount_RNA >= 500 & nCount_RNA <= 7000 & nFeature_RNA >= 500 & nFeature_RNA <= 2800 & (orig.Patient_Cohort == 'Cohort2' & origlib != 'AdUp05_Hu_CD4_9D_Gex' ))"
+    expres: "orig.Patient_Cohort == 'Cohort2' | (orig.Patient_Cohort == 'Cohort1' & cohort1_inclusion_tag == TRUE)"
+    express: "orig.Celltype.2 == 'CD8'"
+  nSamples_expressed: 0.001 # % of cells in which that gene is present
+regress_var: [nCount_RNA, percent.mt]
+norm: LogNormalize
+variable_features:
+  file: ./data/prot_coding_genes.csv
+  method: vst
+  nfeatures: 2000
+  percent: [15, 20, 25, 30]  # iterated
+  mean.cutoff: [0.01, 8]
+  dispersion.cutoff: [1, Inf]
+resolution: [0.2, 0.4, 0.6, 0.8] # iterated during markers
+dim_reduction:
+  base: {type: pca, n_comp: 40, chosen_comp: [15, 20, 25, 30]} # iterated: chosen
+  tsne: {perplexity: "auto", reduction.use: "pca"}
+  umap: {n.neighbors: 10, min.dist: 0.1}
+  harmony: {do: "TRUE", var: "orig.Project"}
+markers:
+  select: snn_res. # pattern in the metadata's columns
+  test: MAST
+  avg_logFC: 0.25
+  p_val_adj: 0.05
+tool: seurat
+pipeline: /home/kmlanderos/scripts/clustering
+environment: clustering
+...

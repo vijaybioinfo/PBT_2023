@@ -1,0 +1,19 @@
+---
+project_name: CD45pCD3p_Batch1_Batch2
+# it can even be a CSV file like the one in a Cell Ranger aggles regation
+input_expression: "/mnt/bioadhoc-temp/Groups/vd-vijay/kmlanderos/pbtumor-all-Batch2/raw/cellranger/aggr/CD45pCD3p_Batch1_Batch2"
+# A table of the metadata per library, or the whole metadata ready
+# it can be multiple file
+metadata: ["/home/kmlanderos/tmp_large/pbtumor-all-Batch2/info/metadata_library_Batch1_Batch2.csv",
+"/home/kmlanderos/tmp_large/pbtumor-all-Batch2/results/ab_demux/CD45xCD3x_Batch1_Batch2/CD45pCD3p_Batch1_Batch2.rds"]
+# "/home/kmlanderos/tmp_large/pbtumor-all-Batch2/info/metadata_library.csv"]
+# if you don't add "/" at the end, it will append 'project_name'
+output_dir: "/mnt/bioadhoc-temp/Groups/vd-vijay/kmlanderos/pbtumor-all-Batch2/results/quality_control/"
+# A file will sufice; columns must be metrics names in the metadataq
+filtering:
+  #file: "./data/file.csv"
+  nFeature_RNA: [500, 2800, 1]
+  nCount_RNA: [500, 7000, 1]
+  percent.mt: [-Inf, 10, 1]
+  expr: "!orig.HT_ID.global %in% c('Doublet', 'Negative')"
+...

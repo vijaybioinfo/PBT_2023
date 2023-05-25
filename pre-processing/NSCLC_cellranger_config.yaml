@@ -1,0 +1,45 @@
+---
+project: "pbtumor-all-Batch2_NSCLC"
+run:
+  - "/mnt/NovaSeq/201016_A00475_0254_BH7VYFDSXY_NV035"
+  - "/mnt/NovaSeq/210226_A00475_0282_BHCV27DSXY_NV042"
+  - "/mnt/NovaSeq/210318_A00475_0290_BHHWVVDSXY_NV043"
+  - "/mnt/NovaSeq/210708_A00475_0340_BHT5MNDSXY_NV054"
+  - "/mnt/NovaSeq/230310_A00475_0585_AH33KMDSX7_NV098"
+  - "/mnt/NovaSeq/230316_A00475_0586_AH3T55DSX7_NV099"
+  - "/mnt/NovaSeq/230324_A00475_0590_AH3WL3DSX7_NV100_24mar23"
+  - "/mnt/NovaSeq/210602_A00475_0322_BHLYLWDSXY_NV051"
+  - "/mnt/NovaSeq/210713_A00475_0342_AHNKWNDSXY_NV055"
+# folder with fastq files output from mkfastq or bcl2fastq; separate by commas if more than one
+fastqs_dir:
+  - "/mnt/BioAdHoc/Groups/vd-vijay/cramirez/seqteam/raw/NV035"
+  - "/mnt/BioAdHoc/Groups/vd-vijay/cramirez/seqteam/raw/NV042"
+  - "/mnt/BioAdHoc/Groups/vd-vijay/cramirez/seqteam/raw/NV043"
+  - "/mnt/BioAdHoc/Groups/vd-vijay/cramirez/seqteam/raw/NV054_AdUpSiEs"
+  - "/home/kmlanderos/tmp_large/seqteam/raw/NV098_GrVe02_AdUp05_AdUp06/AdUp05"
+  - "/home/kmlanderos/tmp_large/seqteam/raw/NV099_AdUp07/AdUp07"
+  - "/home/kmlanderos/tmp_large/seqteam/raw/NV100_AdUp07/AdUp07"
+  - "/mnt/BioAdHoc/Groups/vd-vijay/vfajardo/sequencing_data/06-10-2021/mkfastq/NV051/outs/fastq_path"
+  - "/mnt/BioAdHoc/Groups/vd-vijay/vfajardo/sequencing_data/07-14-2021/mkfastq/NV055/outs/fastq_path"
+output_dir: "/home/kmlanderos/tmp_large/pbtumor-all-Batch2/raw/cellranger/DICE_lung" # created if it doesn't exists
+samples: "AdUp0.*Hu|R24_G" # sample sheet or a pattern to select samples from 'fastqs_dir'
+transcriptome: # Cell Ranger reference
+  count: "/mnt/BioAdHoc/Groups/vd-vijay/references/refdata-cellranger-hg19-3.0.0"
+  vdj: /mnt/BioAdHoc/Groups/vd-vijay/references/refdata-cellranger-vdj-GRCh38-alts-ensembl-2.0.0
+# You can give a sheet per sample or add a column 'library_pattern' with patterns
+# that can be found in the libraries' names where you used the set of barcodes
+feature_ref:
+  main: "/home/kmlanderos/tmp_large/pbtumor-all-Batch2/info/NSCLC_fbarcodes.csv"
+# Metadata with additional columns prefixed like aggr.NAME_OF_AGGR and values equal to 1
+aggregation: "/home/kmlanderos/tmp_large/pbtumor-all-Batch2/info/NSCLC_metadata_library.csv"
+job: # PBS settings
+  template: "/home/kmlanderos/scripts/cellranger/routine_template.sh"
+  walltime: {count: 50:00:00, vdj: 40:00:00, fbarcode: 24:00:00, aggr: 24:00:00}
+  mem: {count: 70gb, vdj: 40gb, fbarcode: 32gb, aggr: 30gb}
+  ppn: {count: 10, vdj: 4, fbarcode: 4, aggr: 6}
+  nodes: 1
+  depend: none # job id; jobs will run acter this dependency sucessfully finishes
+  submit: yes
+cellranger: "/home/ciro/bin/cellranger-3.1.0/cellranger"
+pipeline: "/home/kmlanderos/scripts/cellranger"
+...

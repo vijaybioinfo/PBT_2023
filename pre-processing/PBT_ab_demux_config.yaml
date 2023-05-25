@@ -1,0 +1,30 @@
+---
+project_id: CD45xCD3x_Batch1_Batch2
+output_dir: "/mnt/bioadhoc-temp/Groups/vd-vijay/kmlanderos/pbtumor-all-Batch2/results/ab_demux"
+sample_sheet: "no_file" # table with gex,capture,name
+# not necessary if you already have a sample_sheet, but this will create it with all feature barcode libraries
+count_info:
+  count_dir: /mnt/bioadhoc-temp/Groups/vd-vijay/kmlanderos/pbtumor-all-Batch2/raw/cellranger/count
+  gex_data: filtered
+  fbarcode_data: raw
+demux:
+  max_count_min: 100
+  fold_change: 3
+  subset_tags: random1234
+# empty if you want to aggregate everything; or
+# path to cellranger aggregations (containing aggr1/outs aggr2/outs)
+aggregation:
+  source: "/mnt/bioadhoc-temp/Groups/vd-vijay/kmlanderos/pbtumor-all-Batch2/raw/cellranger/aggr"
+  args: "--metadata=/mnt/bioadhoc-temp/Groups/vd-vijay/kmlanderos/pbtumor-all-Batch2/info/PBT_metadata_donor.csv~hashtag_id"
+# Always include 'donor' as one of them.
+tag_str: donor~hashtag_n~hashtag_id # Feature name structure; BT1-TSC1-C0251
+tag_delim: "" # string use to separate the information in your hashtag names
+job:
+  walltime: 02:00:00
+  mem: 10gb
+  ppn: 1
+  nodes: 1
+  submit: yes # yes, no, or force
+pipeline: /home/kmlanderos/scripts/ab_capture/
+exec_r: /share/apps/R/3.6.1/bin/Rscript
+...
