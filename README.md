@@ -8,11 +8,11 @@ Brain tumors are the most common solid tumors in children and outcomes remain di
 
 In order to evaluate anti-tumor immune response in pediatric brain tumors (PBT), we performed single-cell RNA sequencing (scRNA-seq) and paired single-cell TCR sequencing (scTCR-seq) of patient-derived brain tumor-infiltrating T cells to couple T cell molecular program with TCR repertoire and clonality. We generated single-cell transcriptomic profiles of FACS-sorted T cells isolated from brain tumors of 38 pediatric patients with varying diagnoses and histological grades, those being: Pilocytic astrocytoma, Ganglioglioma, Diffuse astrocytoma, Craniopharyngioma, Choroid plexus papilloma, High grade glioma, Medulloblastoma, Anaplastic ependymoma, Meningioma and Embryonal Tumor with Multilayered Rosettes.
 
-We proved that tumor-infiltrating lymphocytes (TILs) expressing checkpoint transcripts express effector molecules (PDCD1, LAG3), display cytotoxic functions, and are capable of proliferation. Therefore we suggest that these cells might be a good target for immune checkpoint blockade (ICB) and promote their reinvigoration.
+We proved that tumor-infiltrating lymphocytes (TILs) expressing checkpoint transcripts (PDCD1, LAG3), also express effector molecules (IFNG), display cytotoxic functions (GZMA, GZMB), and are capable of proliferation. Therefore we suggest that these cells might be a good target for immune checkpoint blockade (ICB) and promote their reinvigoration.
 
 In order to prove the importance of neoantigen-reactive T cell gene signatures in survival outcomes, we used whole tumor bulk RNA-seq from pediatric tumors and assessed the survival status of patients with high and low values for the gene signatures across time.
 
-We then compared proportions of CD4+ TREGs and CD4-CTLs among total CD4+ tumor-infiltrating lymphocytes from our pediatric cohort with what is observed in adult brain tumors (n=26) and showed the differences. Finally, we did scRNA-seq and scTCR-seq of patients (n=10) bearing NSCLC, to compare features of clonally expanded cells and TCR repertoire diversity with what we see in pediatric brain tumors.
+We then compared proportions of CD4+ TREGs and CD4-CTLs among total CD4+ tumor-infiltrating lymphocytes from our pediatric cohort with what is observed in adult brain tumors (n=26), which have been described as non-responsive upon ICB therapy, and showed the differences. Finally, we used scRNA-seq data of TILs from patients with baseline NSCLC (n=10) or from PDCD1-responsive patients with basal cell carcinoma (BCC; baseline tumors), to compare features of clonally expanded cells with what we see in pediatric brain tumors.
 
 This repository contains the data and scripts used to analyze the samples mentioned above.
 
@@ -42,19 +42,19 @@ Raw data pre-processing
 ------------
 
 ### Single-cell
-* To do the 10x demultiplexing and mapping just pull [our in-house pipeline](https://github.com/vijaybioinfo/cellranger_wrappeR) using Cell Ranger.
-* To do the donor the multiplexing just pull [our in-house pipeline](https://github.com/vijaybioinfo/ab_capture).
-* To do the single-cell quality control just pull [our in-house pipeline](https://github.com/vijaybioinfo/quality_control).
+* To do the 10x demultiplexing and mapping pull [our in-house pipeline](https://github.com/vijaybioinfo/cellranger_wrappeR) using Cell Ranger.
+* To do the donor demultiplexing pull [our in-house pipeline](https://github.com/vijaybioinfo/ab_capture).
+* To do the single-cell quality control pull [our in-house pipeline](https://github.com/vijaybioinfo/quality_control).
 * To do the doublet detection use [our in-house pipeline](https://github.com/vijaybioinfo/doublet_detection) using Scrublet. 
 * To generate the clustering of single-cell data just pull [our in-house pipeline](https://github.com/vijaybioinfo/clustering) using Seurat.
-* To do the aggregation of VDJ libraries just pull [our in-house pipeline](https://github.com/vijaybioinfo/VDJ_aggr).  
+* To do the aggregation of VDJ libraries pull [our in-house pipeline](https://github.com/vijaybioinfo/VDJ_aggr).  
 
 > Relevant scripts are located in: ./pre-processing  
 
 For more specific information about the data generation and processing, please check the "methods" section within the manuscript.  
 
 ### Bulk   
-Patients diagnosed with High-Grade Gliomas (HGG; n=120) with records of age (<20 years old) and sex were considered for the survival analysis. RNA-seq samples of the donors classified as metastasis or with unavailable TUMOR TYPE information were filtered out; samples derived from cell-lines or obtained from the spine region were also excluded. The final list of donor samples can be found in: ./pre-processing 
+Patients diagnosed with High-Grade Gliomas (HGG; n=120) with records of age (<20 years old) and sex were considered for the survival analysis. RNA-seq samples of the donors classified as metastasis or with unavailable TUMOR TYPE information were filtered out; samples derived from cell lines or obtained from the spine region were also excluded. The final list of donor samples can be found in: ./pre-processing 
 
 
 Figures
