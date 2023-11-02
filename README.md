@@ -8,7 +8,7 @@ Brain tumors are the most common solid tumors in children and outcomes remain di
 
 In order to evaluate anti-tumor immune response in pediatric brain tumors (PBT), we performed single-cell RNA sequencing (scRNA-seq) and paired single-cell TCR sequencing (scTCR-seq) of patient-derived brain tumor-infiltrating T cells to couple T cell molecular program with TCR repertoire and clonality. We generated single-cell transcriptomic profiles of FACS-sorted T cells isolated from brain tumors of 38 pediatric patients with varying diagnoses and histological grades, those being: Pilocytic astrocytoma, Ganglioglioma, Diffuse astrocytoma, Craniopharyngioma, Choroid plexus papilloma, High grade glioma, Medulloblastoma, Anaplastic ependymoma, Meningioma and Embryonal Tumor with Multilayered Rosettes.
 
-We proved that cells expressing checkpoint transcripts express effector molecules (PDCD1, LAG3), display cytotoxic functions, and are capable of proliferation. Therefore we suggest that these cells might be a good target for immune checkpoint blockade (ICB) and promote their reinvigoration.
+We proved that tumor-infiltrating lymphocytes (TILs) expressing checkpoint transcripts express effector molecules (PDCD1, LAG3), display cytotoxic functions, and are capable of proliferation. Therefore we suggest that these cells might be a good target for immune checkpoint blockade (ICB) and promote their reinvigoration.
 
 In order to prove the importance of neoantigen-reactive T cell gene signatures in survival outcomes, we used whole tumor bulk RNA-seq from pediatric tumors and assessed the survival status of patients with high and low values for the gene signatures across time.
 
