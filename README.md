@@ -12,7 +12,7 @@ We proved that tumor-infiltrating lymphocytes (TILs) expressing checkpoint trans
 
 In order to prove the importance of neoantigen-reactive T cell gene signatures in survival outcomes, we used whole tumor bulk RNA-seq from pediatric tumors and assessed the survival status of patients with high and low values for the gene signatures across time.
 
-We then compared proportions of CD4+ TREGs and CD4-CTLs among total CD4+ tumor-infiltrating lymphocytes from our pediatric cohort with what is observed in adult brain tumors (n=26), which have been described as non-responsive upon ICB therapy, and showed the differences. Finally, we used scRNA-seq data of TILs from patients with baseline NSCLC (n=10) or from PDCD1-responsive patients with basal cell carcinoma (BCC; baseline tumors), to compare features of clonally expanded cells with what we see in pediatric brain tumors.
+We then compared proportions of CD4+ TREGs and CD4-CTLs among total CD4+ tumor-infiltrating lymphocytes from our pediatric cohort with what is observed in adult brain tumors (n=26), which have been described as non-responsive upon ICB therapy. Finally, we used scRNA-seq data of TILs from patients with baseline NSCLC (n=10) or from PDCD1-responsive patients with basal cell carcinoma (BCC; baseline tumors), to compare features of clonally expanded cells with what we see in pediatric brain tumors.
 
 This repository contains the data and scripts used to analyze the samples mentioned above.
 
