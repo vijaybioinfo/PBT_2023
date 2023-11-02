@@ -35,7 +35,7 @@ Raw data
 
 *  Previously published scRNA-seq data (Mathew et.al 2021) of adult high-grade gliomas can be downloaded using the following GEO accession number: [GSE163108](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE163108)
 
-* Previously published scRNA-seq data (Yost et.al 2019) derived from patients with basal cell carcinoma (BCC) pre- and post-anti-PD-1 therapy can be downloaded using the following GEO accession number: [GSE123813](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE123813)
+* Previously published scRNA-seq data (Yost et.al 2019) derived from patients with basal cell carcinoma (BCC) pre-anti-PD-1 therapy can be downloaded using the following GEO accession number: [GSE123813](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE123813)
 
 
 Raw data pre-processing  
