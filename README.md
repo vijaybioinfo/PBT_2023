@@ -33,7 +33,7 @@ Raw data
 
 * For survival analysis, previously published bulk RNA-seq data from the Pediatric Brain Tumor Atlas (PBTA) were downloaded from the [Gabriella Miller Kids First Data Resource Portal](https://portal.kidsfirstdrc.org/login) through the [CAVATICA](https://www.cavatica.org/) cloud-based platform, and clinical data were accessed using [PedcBioPortal](https://pedcbioportal.kidsfirstdrc.org/). For more specific information about the data processing, please check the "methods" section within the manuscript.  
 
-*  Previously published scRNA-seq data (Mathew et.al 2021) of adult high-grade gliomas can be downloaded using the following GEO accession number: [GSE163108](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE163108)
+*  Previously published scRNA-seq data (Mathewson et.al 2021) of adult high-grade gliomas can be downloaded using the following GEO accession number: [GSE163108](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE163108)
 
 * Previously published scRNA-seq data (Yost et.al 2019) derived from patients with basal cell carcinoma (BCC) pre-anti-PD-1 therapy can be downloaded using the following GEO accession number: [GSE123813](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE123813)
 
