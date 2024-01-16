@@ -77,8 +77,8 @@ If you want to clone this repository run:
 ```bash
 git clone https://github.com/vijaybioinfo/PBT_2023.git
 ```
-Please cite the following manuscript if you are using this repository:
-
+Please cite the following manuscript if you are using this repository:  
+Upadhye, A., Meza Landeros, K.E., Ramírez-Suástegui, C. et al. Intra-tumoral T cells in pediatric brain tumors display clonal expansion and effector properties. Nat Cancer (2024). https://doi.org/10.1038/s43018-023-00706-9
 
 Maintainers
 -----------
